@@ -5,6 +5,15 @@ function calculateBMI() {
   height = height / 100;
   let bmi = weight / (height * height);
 
-  document.getElementById("result").innerText =
-    "Your BMI is: " + bmi.toFixed(2);
+  let result = "Your BMI is: " + bmi.toFixed(2);
+
+  if (bmi < 18.5) {
+    result += " (Underweight)";
+  } else if (bmi < 25) {
+    result += " (Normal)";
+  } else {
+    result += " (Overweight)";
+  }
+
+  document.getElementById("result").innerText = result;
 }
