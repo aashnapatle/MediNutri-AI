@@ -1,22 +1,20 @@
-body {
-    font-family: Arial;
-    text-align: center;
-    background-color: #0f172a;
-    color: white;
-}
-
-input {
-    padding: 10px;
-    margin: 5px;
-    border-radius: 5px;
-    border: none;
-}
-
-button {
-    padding: 10px 20px;
-    background: purple;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+:root{
+  --primary:#ff4f9a;
+  --primary-dark:#e7357f;
+  --light-pink:#ffe4f0;
+  --bg:#fff7fb;
+  --card:#ffffff;
+  --text:#202033;
+  --muted:#777;
+  --blue:#3b82f6;
+  --purple:#7c3aed;
+  --green:#22c55e;
+}:root{
+  --primary:#1e88ff;
+  --primary-light:#eaf4ff;
+  --bg:#f7fbff;
+  --card:#ffffff;
+  --text:#071b4a;
+  --muted:#6b7280;
+  --success:#20c997;
 }
