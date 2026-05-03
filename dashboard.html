@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MediNutri AI+ Dashboard</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    min-height:100vh;
+    background:linear-gradient(135deg,#0ea5e9,#2563eb,#1e3a8a);
+    color:white;
+}
+
+.navbar{
+    background:#0f172a;
+    padding:18px;
+    text-align:center;
+    font-size:28px;
+    font-weight:bold;
+}
+
+.menu{
+    text-align:center;
+    padding:15px;
+    background:#1e40af;
+}
+
+.menu a{
+    color:white;
+    text-decoration:none;
+    margin:15px;
+    font-weight:bold;
+}
+
+.container{
+    padding:30px;
+}
+
+.welcome{
+    text-align:center;
+    margin-bottom:30px;
+}
+
+.dashboard{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:20px;
+}
+
+.card{
+    background:white;
+    color:#111827;
+    padding:25px;
+    border-radius:20px;
+    text-align:center;
+    box-shadow:0 12px 25px rgba(0,0,0,0.2);
+    transition:0.3s;
+}
+
+.card:hover{
+    transform:translateY(-8px);
+}
+
+.card h3{
+    color:#2563eb;
+    margin-bottom:10px;
+}
+
+.card p{
+    font-size:22px;
+    font-weight:bold;
+}
+
+.tip{
+    margin-top:25px;
+    background:#dbeafe;
+    color:#111827;
+    padding:25px;
+    border-radius:20px;
+    text-align:center;
+}
+
+.quote{
+    margin-top:20px;
+    text-align:center;
+    font-style:italic;
+    font-size:18px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="navbar">📊 MediNutri AI+ Dashboard</div>
+
+<div class="menu">
+<a href="index.html">Home</a>
+<a href="dashboard.html">Dashboard</a>
+<a href="calories.html">Calories</a>
+<a href="doctors.html">Doctors</a>
+</div>
+
+<div class="container">
+
+<div class="welcome">
+<h1>Welcome to Your Health Dashboard 💙</h1>
+<p>Track your health stats daily</p>
+</div>
+
+<div class="dashboard">
+
+<div class="card">
+<h3>BMI</h3>
+<p>22.5 ✅</p>
+</div>
+
+<div class="card">
+<h3>Calories</h3>
+<p>2100 🔥</p>
+</div>
+
+<div class="card">
+<h3>Water Intake</h3>
+<p>6 Glass 💧</p>
+</div>
+
+<div class="card">
+<h3>Steps</h3>
+<p>7500 🚶</p>
+</div>
+
+</div>
+
+<div class="tip">
+<h2>Daily Health Tip</h2>
+<p>Drink water every 2 hours and avoid processed junk food.</p>
+</div>
+
+<div class="quote">
+“Your health is an investment, not an expense.”
+</div>
+
+</div>
+
+</body>
+</html>
