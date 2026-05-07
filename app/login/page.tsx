@@ -24,10 +24,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center overflow-hidden bg-gradient-to-br from-background via-background to-accent/5">
-      
-      {/* BACKGROUND TEXT */}
-      <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-0">
+    <div className="min-h-screen bg-[url('/hero.jpg')] bg-[length:80%] bg-center bg-no-repeat flex items-center justify-center">      <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-0">
         <div className="text-7xl md:text-9xl font-bold text-foreground/5 text-center animate-pulse tracking-widest">
           MEDINUTRI AI
         </div>
@@ -36,25 +33,14 @@ export default function LoginPage() {
       <div className="w-full h-screen flex relative z-10">
 
         {/* LEFT SIDE */}
-        <div className="hidden lg:flex lg:w-1/2 items-center justify-center p-8 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-accent/10 to-primary/10" />
+        <div className="w-full lg:w-1/2 flex items-center justify-start pl-10">          <div className="absolute inset-0 bg-gradient-to-br from-accent/10 to-primary/10" />
 
           <div className="relative w-full h-full flex items-center justify-center">
-            <div className="animate-fade-in-up">
-
-              <img
-                src="/nutrition-foods.jpg"
-                alt="Healthy nutrition"
-                className="w-full h-96 object-cover rounded-3xl shadow-2xl"
-              />
+            
 
               <div className="mt-8 text-center animate-fade-in" style={{ animationDelay: "0.3s" }}>
-                <h2 className="text-3xl font-bold text-foreground mb-2">
-                  Nutrition First
-                </h2>
-                <p className="text-muted-foreground text-lg">
-                  Personalized meal planning & nutrition insights
-                </p>
+                
+                
               </div>
 
             </div>
@@ -62,7 +48,7 @@ export default function LoginPage() {
         </div>
 
         {/* RIGHT SIDE */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-8">
+        <div className="w-full lg:w-1/2 flex items-center justify-start p-1 sm:p-1">
 
           <div className="w-full max-w-md animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
             
@@ -71,7 +57,7 @@ export default function LoginPage() {
               {/* HEADER */}
               <div className="text-center mb-8">
                 <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-2">
-                  MediNutri
+                  MediNutri Ai
                 </h1>
                 <p className="text-muted-foreground text-sm">
                   AI-Powered Healthcare & Nutrition
@@ -164,33 +150,6 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* ANIMATIONS */}
-      <style jsx>{`
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-
-        .animate-fade-in-up {
-          animation: fadeInUp 0.8s ease-out forwards;
-        }
-
-        .animate-fade-in {
-          animation: fadeIn 0.8s ease-out forwards;
-          opacity: 0;
-        }
-      `}</style>
-    </div>
+      
   )
 }
