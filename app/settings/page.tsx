@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useLanguage } from "@/context/LanguageContext"
 import { DashboardLayout } from "@/components/dashboard-layout"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -43,9 +44,9 @@ const securitySettings = [
 
 export default function SettingsPage() {
   const [darkMode, setDarkMode] = useState(false)
-  const [language, setLanguage] = useState("English")
+  const { language, setLanguage } = useLanguage()
 
-  // 🌙 load saved theme + language
+  // load saved theme + language
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme")
     const savedLang = localStorage.getItem("lang")
@@ -60,7 +61,7 @@ export default function SettingsPage() {
     }
   }, [])
 
-  // 🌙 apply dark mode
+  // apply dark mode
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add("dark")
@@ -71,7 +72,7 @@ export default function SettingsPage() {
     }
   }, [darkMode])
 
-  // 🌐 save language
+  // save language
   useEffect(() => {
     localStorage.setItem("lang", language)
   }, [language])
@@ -80,7 +81,7 @@ export default function SettingsPage() {
     <DashboardLayout title="Settings" subtitle="Manage your app preferences">
       <div className="max-w-3xl space-y-6">
 
-        {/* 🔔 Notifications */}
+        {/* Notifications */}
         <Card className="rounded-2xl border-0 shadow-md">
           <CardContent className="p-6">
             <h3 className="text-lg font-semibold mb-4">Notifications</h3>
@@ -103,14 +104,14 @@ export default function SettingsPage() {
           </CardContent>
         </Card>
 
-        {/* ⚙️ Preferences */}
+        {/* Preferences */}
         <Card className="rounded-2xl border-0 shadow-md">
           <CardContent className="p-6">
             <h3 className="text-lg font-semibold mb-4">Preferences</h3>
 
             <div className="space-y-4">
 
-              {/* 🌙 DARK MODE */}
+              {/* Dark Mode */}
               <div className="flex items-center justify-between p-4 rounded-xl bg-secondary/30">
                 <div className="flex items-center gap-4">
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
@@ -128,7 +129,7 @@ export default function SettingsPage() {
                 />
               </div>
 
-              {/* 🌐 LANGUAGE */}
+              {/* Language */}
               <div className="flex items-center justify-between p-4 rounded-xl bg-secondary/30">
                 <div className="flex items-center gap-4">
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
@@ -156,7 +157,7 @@ export default function SettingsPage() {
           </CardContent>
         </Card>
 
-        {/* 🔒 Security */}
+        {/* Security */}
         <Card className="rounded-2xl border-0 shadow-md">
           <CardContent className="p-6">
             <h3 className="text-lg font-semibold mb-4">Security</h3>
@@ -185,7 +186,7 @@ export default function SettingsPage() {
           </CardContent>
         </Card>
 
-        {/* ⚠️ Danger Zone */}
+        {/* Danger Zone */}
         <Card className="rounded-2xl border border-red-200 shadow-md">
           <CardContent className="p-6">
             <h3 className="text-lg font-semibold text-red-500 mb-4">Danger Zone</h3>
