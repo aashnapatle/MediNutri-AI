@@ -6,13 +6,13 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Eye, EyeOff } from "lucide-react"
 
-export default function LoginPage() {
+export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const router = useRouter()
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSignup = (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!email || !password) {
@@ -20,13 +20,14 @@ export default function LoginPage() {
       return
     }
 
-    router.push("/dashboard")
+    alert("Account created 🎉")
+    router.push("/login")
   }
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center overflow-hidden bg-gradient-to-br from-background via-background to-accent/5">
       
-      {/* BACKGROUND TEXT */}
+      {/* 🔥 BIG BACKGROUND TEXT */}
       <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-0">
         <div className="text-7xl md:text-9xl font-bold text-foreground/5 text-center animate-pulse tracking-widest">
           MEDINUTRI AI
@@ -50,10 +51,10 @@ export default function LoginPage() {
 
               <div className="mt-8 text-center animate-fade-in" style={{ animationDelay: "0.3s" }}>
                 <h2 className="text-3xl font-bold text-foreground mb-2">
-                  Nutrition First
+                  Healthy Start
                 </h2>
                 <p className="text-muted-foreground text-lg">
-                  Personalized meal planning & nutrition insights
+                  Join MediNutri & transform your health 🚀
                 </p>
               </div>
 
@@ -71,18 +72,18 @@ export default function LoginPage() {
               {/* HEADER */}
               <div className="text-center mb-8">
                 <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-2">
-                  MediNutri
+                  Create Account
                 </h1>
                 <p className="text-muted-foreground text-sm">
-                  AI-Powered Healthcare & Nutrition
+                  Start your AI health journey
                 </p>
               </div>
 
               {/* FORM */}
-              <form onSubmit={handleSubmit} className="space-y-5">
+              <form onSubmit={handleSignup} className="space-y-5">
 
                 {/* EMAIL */}
-                <div className="space-y-2 animate-fade-in" style={{ animationDelay: "0.4s" }}>
+                <div className="space-y-2">
                   <label className="text-sm font-medium text-foreground/80">
                     Email Address
                   </label>
@@ -96,7 +97,7 @@ export default function LoginPage() {
                 </div>
 
                 {/* PASSWORD */}
-                <div className="space-y-2 animate-fade-in" style={{ animationDelay: "0.5s" }}>
+                <div className="space-y-2">
                   <label className="text-sm font-medium text-foreground/80">
                     Password
                   </label>
@@ -121,41 +122,28 @@ export default function LoginPage() {
                   </div>
                 </div>
 
-                {/* REMEMBER */}
-                <div className="flex items-center justify-between text-sm animate-fade-in" style={{ animationDelay: "0.6s" }}>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input type="checkbox" className="accent-primary" />
-                    <span className="text-muted-foreground">Remember me</span>
-                  </label>
-
-                  <span className="text-primary cursor-pointer">
-                    Forgot password?
-                  </span>
-                </div>
-
                 {/* BUTTON */}
                 <Button
                   type="submit"
                   className="w-full mt-6 bg-gradient-to-r from-primary to-secondary text-white py-3 rounded-xl hover:scale-105 transition"
                 >
-                  Sign In
+                  Sign Up
                 </Button>
 
-                {/* SIGNUP LINK */}
+                {/* LOGIN LINK */}
                 <p className="text-center text-sm text-muted-foreground mt-4">
-                  Don’t have an account?{" "}
+                  Already have an account?{" "}
                   <span
-                    onClick={() => router.push("/signup")}
+                    onClick={() => router.push("/login")}
                     className="text-primary cursor-pointer hover:underline"
                   >
-                    Sign up
+                    Login
                   </span>
                 </p>
 
               </form>
             </div>
 
-            {/* FOOTER */}
             <p className="text-center text-xs text-muted-foreground mt-6">
               Your health, powered by AI
             </p>
