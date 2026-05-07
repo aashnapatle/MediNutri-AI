@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useLanguage } from "@/context/LanguageContext"
-import { translations } from "@/utils/translations"
-
+import { translations } from "@/lib/translations"
 import { DashboardLayout } from "@/components/dashboard-layout"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
