@@ -43,17 +43,24 @@ const securitySettings = [
 
 export default function SettingsPage() {
   const [darkMode, setDarkMode] = useState(false)
+  const [language, setLanguage] = useState("English")
 
-  // 🔥 load saved theme
+  // 🌙 load saved theme + language
   useEffect(() => {
-    const saved = localStorage.getItem("theme")
-    if (saved === "dark") {
+    const savedTheme = localStorage.getItem("theme")
+    const savedLang = localStorage.getItem("lang")
+
+    if (savedTheme === "dark") {
       setDarkMode(true)
       document.documentElement.classList.add("dark")
     }
+
+    if (savedLang) {
+      setLanguage(savedLang)
+    }
   }, [])
 
-  // 🔥 apply theme
+  // 🌙 apply dark mode
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add("dark")
@@ -64,11 +71,16 @@ export default function SettingsPage() {
     }
   }, [darkMode])
 
+  // 🌐 save language
+  useEffect(() => {
+    localStorage.setItem("lang", language)
+  }, [language])
+
   return (
     <DashboardLayout title="Settings" subtitle="Manage your app preferences">
       <div className="max-w-3xl space-y-6">
 
-        {/* Notifications */}
+        {/* 🔔 Notifications */}
         <Card className="rounded-2xl border-0 shadow-md">
           <CardContent className="p-6">
             <h3 className="text-lg font-semibold mb-4">Notifications</h3>
@@ -91,7 +103,7 @@ export default function SettingsPage() {
           </CardContent>
         </Card>
 
-        {/* Preferences */}
+        {/* ⚙️ Preferences */}
         <Card className="rounded-2xl border-0 shadow-md">
           <CardContent className="p-6">
             <h3 className="text-lg font-semibold mb-4">Preferences</h3>
@@ -122,22 +134,29 @@ export default function SettingsPage() {
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
                     <Globe className="h-5 w-5 text-primary" />
                   </div>
+
                   <div>
                     <p className="font-medium">Language</p>
-                    <p className="text-sm text-muted-foreground">English (US)</p>
+                    <p className="text-sm text-muted-foreground">{language}</p>
                   </div>
                 </div>
 
-                <Button variant="outline" size="sm" className="rounded-xl">
-                  Change
-                </Button>
+                <select
+                  value={language}
+                  onChange={(e) => setLanguage(e.target.value)}
+                  className="border rounded px-3 py-1 bg-white dark:bg-gray-800"
+                >
+                  <option>English</option>
+                  <option>Hindi</option>
+                  <option>Hinglish</option>
+                </select>
               </div>
 
             </div>
           </CardContent>
         </Card>
 
-        {/* Security */}
+        {/* 🔒 Security */}
         <Card className="rounded-2xl border-0 shadow-md">
           <CardContent className="p-6">
             <h3 className="text-lg font-semibold mb-4">Security</h3>
@@ -166,7 +185,7 @@ export default function SettingsPage() {
           </CardContent>
         </Card>
 
-        {/* Danger Zone */}
+        {/* ⚠️ Danger Zone */}
         <Card className="rounded-2xl border border-red-200 shadow-md">
           <CardContent className="p-6">
             <h3 className="text-lg font-semibold text-red-500 mb-4">Danger Zone</h3>
