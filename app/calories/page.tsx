@@ -40,15 +40,20 @@ const activityMultipliers: Record<string, number> = {
   "very-active": 1.9,
 }
 
-function calculateCalories(age: number, gender: string, activity: string): CalorieResult | null {
-  if (!age || !gender || !activity) return null
+function calculateCalories(
+  age: number,
+  gender: string,
+  activity: string,
+  weight: number,
+  height: number
+): CalorieResult | null {
+  if (!age || !gender || !activity || !weight || !height) return null
 
-  // Base Metabolic Rate (simplified Harris-Benedict equation)
   let bmr: number
   if (gender === "male") {
-    bmr = 88.362 + (13.397 * 70) + (4.799 * 175) - (5.677 * age)
+    bmr = 10 * weight + 6.25 * height - 5 * age + 5
   } else {
-    bmr = 447.593 + (9.247 * 60) + (3.098 * 165) - (4.330 * age)
+    bmr = 10 * weight + 6.25 * height - 5 * age - 161
   }
 
   const multiplier = activityMultipliers[activity] || 1.55
@@ -89,37 +94,57 @@ export default function CaloriesPage() {
   const [age, setAge] = useState("")
   const [gender, setGender] = useState("")
   const [activity, setActivity] = useState("")
+  const [weight, setWeight] = useState("")
+  const [height, setHeight] = useState("")
   const [result, setResult] = useState<CalorieResult | null>(null)
 
+  // ✅ FIXED FUNCTION (NO DUPLICATE)
   const handleCalculate = () => {
-    const calorieResult = calculateCalories(parseInt(age), gender, activity)
+    const calorieResult = calculateCalories(
+      parseInt(age),
+      gender,
+      activity,
+      parseInt(weight),
+      parseInt(height)
+    )
+
     setResult(calorieResult)
+
+    // ✅ SAVE FOR DASHBOARD
+    if (calorieResult) {
+      localStorage.setItem("calories", calorieResult.calories.toString())
+    }
   }
 
   return (
     <DashboardLayout title="Calorie Calculator" subtitle="Get your daily calorie requirement">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Input Form */}
+
         <Card className="rounded-2xl border-0 shadow-md h-fit">
           <CardContent className="p-6">
             <h3 className="text-lg font-semibold text-foreground mb-6">Enter Details</h3>
 
             <div className="space-y-5">
+
               <div>
-                <label className="block text-sm font-medium text-muted-foreground mb-2">Age</label>
-                <Input
-                  type="number"
-                  placeholder="21"
-                  value={age}
-                  onChange={(e) => setAge(e.target.value)}
-                  className="h-12 rounded-xl border-border bg-secondary/50"
-                />
+                <label className="block text-sm font-medium mb-2">Age</label>
+                <Input type="number" value={age} onChange={(e) => setAge(e.target.value)} />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-muted-foreground mb-2">Gender</label>
+                <label className="block text-sm font-medium mb-2">Weight (kg)</label>
+                <Input type="number" value={weight} onChange={(e) => setWeight(e.target.value)} />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Height (cm)</label>
+                <Input type="number" value={height} onChange={(e) => setHeight(e.target.value)} />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Gender</label>
                 <Select value={gender} onValueChange={setGender}>
-                  <SelectTrigger className="h-12 rounded-xl border-border bg-secondary/50">
+                  <SelectTrigger>
                     <SelectValue placeholder="Select gender" />
                   </SelectTrigger>
                   <SelectContent>
@@ -130,11 +155,9 @@ export default function CaloriesPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-muted-foreground mb-2">
-                  Activity Level
-                </label>
+                <label className="block text-sm font-medium mb-2">Activity Level</label>
                 <Select value={activity} onValueChange={setActivity}>
-                  <SelectTrigger className="h-12 rounded-xl border-border bg-secondary/50">
+                  <SelectTrigger>
                     <SelectValue placeholder="Select activity level" />
                   </SelectTrigger>
                   <SelectContent>
@@ -149,87 +172,33 @@ export default function CaloriesPage() {
 
               <Button
                 onClick={handleCalculate}
-                className="w-full h-12 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 font-medium"
+                className="w-full h-12 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90"
               >
                 Calculate Calories
               </Button>
+
             </div>
           </CardContent>
         </Card>
 
-        {/* Results */}
-        <div className="space-y-6">
-          {/* Calorie Result */}
-          <Card className="rounded-2xl border-0 shadow-md">
-            <CardContent className="p-6">
-              <h3 className="text-lg font-semibold text-foreground mb-4">Your Daily Calorie Need</h3>
-              <div className="flex items-center gap-4">
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
-                  <Flame className="h-8 w-8 text-primary" />
-                </div>
-                <div>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-4xl font-bold text-primary">
-                      {result ? result.calories : "2100"}
-                    </span>
-                    <span className="text-lg text-muted-foreground">kcal</span>
-                  </div>
-                  <p className="text-sm text-primary font-medium">Recommended</p>
-                </div>
+        {/* RESULT SAME */}
+        <Card className="rounded-2xl border-0 shadow-md">
+          <CardContent className="p-6">
+            <h3 className="text-lg font-semibold mb-4">Your Daily Calorie Need</h3>
+            <div className="flex items-center gap-4">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
+                <Flame className="h-8 w-8 text-primary" />
               </div>
-            </CardContent>
-          </Card>
-
-          {/* AI Diet Suggestion */}
-          <Card className="rounded-2xl border-0 shadow-md">
-            <CardContent className="p-6">
-              <h3 className="text-lg font-semibold text-foreground mb-4">AI Diet Suggestion</h3>
-              <div className="space-y-4">
-                {(result?.meals || [
-                  {
-                    name: "Breakfast",
-                    description: "Oats with fruits, nuts and milk",
-                    icon: Coffee,
-                    color: "bg-orange-100 text-orange-500",
-                  },
-                  {
-                    name: "Lunch",
-                    description: "Brown rice, dal, sabzi, salad",
-                    icon: Utensils,
-                    color: "bg-green-100 text-green-500",
-                  },
-                  {
-                    name: "Dinner",
-                    description: "Roti, paneer, vegetables",
-                    icon: Moon,
-                    color: "bg-blue-100 text-blue-500",
-                  },
-                  {
-                    name: "Snacks",
-                    description: "Fruits, almonds, green tea",
-                    icon: Apple,
-                    color: "bg-purple-100 text-purple-500",
-                  },
-                ]).map((meal) => (
-                  <div key={meal.name} className="flex items-center gap-4 p-3 rounded-xl bg-secondary/30">
-                    <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${meal.color}`}>
-                      <meal.icon className="h-6 w-6" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-foreground">{meal.name}</p>
-                      <p className="text-sm text-muted-foreground">{meal.description}</p>
-                    </div>
-                  </div>
-                ))}
+              <div>
+                <span className="text-4xl font-bold text-primary">
+                  {result ? result.calories : "2100"}
+                </span>
+                <span className="ml-1">kcal</span>
               </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+            </div>
+          </CardContent>
+        </Card>
 
-      {/* Decorative Image */}
-      <div className="fixed bottom-0 left-64 pointer-events-none opacity-30 hidden xl:block">
-        <div className="text-[200px]">🥗</div>
       </div>
     </DashboardLayout>
   )
