@@ -6,8 +6,10 @@ import { Card, CardContent } from "@/components/ui/card"
 
 export default function SettingsPage() {
   const [darkMode, setDarkMode] = useState(false)
+  const [notifications, setNotifications] = useState(true)
+  const [emailAlerts, setEmailAlerts] = useState(false)
 
-  // 🔥 load saved theme
+  // load saved theme
   useEffect(() => {
     const saved = localStorage.getItem("theme")
     if (saved === "dark") {
@@ -16,7 +18,7 @@ export default function SettingsPage() {
     }
   }, [])
 
-  // 🔥 apply theme
+  // apply theme
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add("dark")
@@ -29,20 +31,18 @@ export default function SettingsPage() {
 
   return (
     <DashboardLayout title="Settings" subtitle="Manage your app preferences">
-      
+
       <div className="space-y-6">
 
-        {/* Preferences */}
         <Card className="rounded-2xl border-0 shadow-md">
-          <CardContent className="p-6">
+          <CardContent className="p-6 space-y-6">
 
-            <h3 className="text-lg font-semibold text-foreground mb-4">
+            <h3 className="text-lg font-semibold text-foreground">
               Preferences
             </h3>
 
             {/* 🌙 DARK MODE */}
             <div className="flex items-center justify-between p-4 rounded-xl bg-muted">
-              
               <div>
                 <p className="font-medium text-foreground">Dark Mode</p>
                 <p className="text-sm text-muted-foreground">
@@ -50,7 +50,6 @@ export default function SettingsPage() {
                 </p>
               </div>
 
-              {/* TOGGLE */}
               <button
                 onClick={() => setDarkMode(!darkMode)}
                 className={`w-12 h-6 flex items-center rounded-full p-1 transition ${
@@ -63,7 +62,38 @@ export default function SettingsPage() {
                   }`}
                 />
               </button>
+            </div>
 
+            {/* 🔔 NOTIFICATIONS */}
+            <div className="flex items-center justify-between p-4 rounded-xl bg-muted">
+              <div>
+                <p className="font-medium text-foreground">Notifications</p>
+                <p className="text-sm text-muted-foreground">
+                  Enable app notifications
+                </p>
+              </div>
+
+              <input
+                type="checkbox"
+                checked={notifications}
+                onChange={() => setNotifications(!notifications)}
+              />
+            </div>
+
+            {/* 📧 EMAIL ALERTS */}
+            <div className="flex items-center justify-between p-4 rounded-xl bg-muted">
+              <div>
+                <p className="font-medium text-foreground">Email Alerts</p>
+                <p className="text-sm text-muted-foreground">
+                  Receive updates via email
+                </p>
+              </div>
+
+              <input
+                type="checkbox"
+                checked={emailAlerts}
+                onChange={() => setEmailAlerts(!emailAlerts)}
+              />
             </div>
 
           </CardContent>
