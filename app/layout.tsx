@@ -3,8 +3,9 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
-// ✅ ADD THIS
+// ✅ ADD THESE
 import { LanguageProvider } from "@/context/LanguageContext"
+import { ThemeProvider } from "@/components/theme-provider"
 
 const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
@@ -38,13 +39,21 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className="bg-background">
+    // ✅ Added suppressHydrationWarning
+    <html lang="en" className="bg-background" suppressHydrationWarning>
       <body className="font-sans antialiased">
-
-        {/* ✅ WRAP HERE */}
-        <LanguageProvider>
-          {children}
-        </LanguageProvider>
+        
+        {/* ✅ WRAP WITH BOTH PROVIDERS */}
+        <ThemeProvider 
+          attribute="class" 
+          defaultTheme="light" 
+          enableSystem 
+          disableTransitionOnChange
+        >
+          <LanguageProvider>
+            {children}
+          </LanguageProvider>
+        </ThemeProvider>
 
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>

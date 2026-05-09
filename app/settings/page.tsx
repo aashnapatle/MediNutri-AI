@@ -5,6 +5,9 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { Bell, Moon, Globe, Shield, Smartphone, Mail } from "lucide-react"
+// ✅ ADD THESE IMPORTS
+import { useTheme } from "next-themes"
+import { useEffect, useState } from "react"
 
 const notificationSettings = [
   {
@@ -30,23 +33,6 @@ const notificationSettings = [
   },
 ]
 
-const preferenceSettings = [
-  {
-    id: "darkMode",
-    label: "Dark Mode",
-    description: "Switch to dark theme",
-    icon: Moon,
-    enabled: false,
-  },
-  {
-    id: "language",
-    label: "Language",
-    description: "English (US)",
-    icon: Globe,
-    enabled: true,
-  },
-]
-
 const securitySettings = [
   {
     id: "2fa",
@@ -58,6 +44,19 @@ const securitySettings = [
 ]
 
 export default function SettingsPage() {
+  // ✅ DARK MODE LOGIC
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  // Prevent hydration mismatch (ensures theme is only set after client loads)
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return null // Or a loading spinner
+  }
+
   return (
     <DashboardLayout title="Settings" subtitle="Manage your app preferences">
       <div className="max-w-3xl space-y-6">
@@ -92,29 +91,39 @@ export default function SettingsPage() {
           <CardContent className="p-6">
             <h3 className="text-lg font-semibold text-foreground mb-4">Preferences</h3>
             <div className="space-y-4">
-              {preferenceSettings.map((setting) => (
-                <div
-                  key={setting.id}
-                  className="flex items-center justify-between p-4 rounded-xl bg-secondary/30"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
-                      <setting.icon className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-foreground">{setting.label}</p>
-                      <p className="text-sm text-muted-foreground">{setting.description}</p>
-                    </div>
+              {/* Dark Mode Toggle */}
+              <div className="flex items-center justify-between p-4 rounded-xl bg-secondary/30">
+                <div className="flex items-center gap-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
+                    <Moon className="h-5 w-5 text-primary" />
                   </div>
-                  {setting.id === "darkMode" ? (
-                    <Switch defaultChecked={setting.enabled} />
-                  ) : (
-                    <Button variant="outline" size="sm" className="rounded-xl">
-                      Change
-                    </Button>
-                  )}
+                  <div>
+                    <p className="font-medium text-foreground">Dark Mode</p>
+                    <p className="text-sm text-muted-foreground">Switch to dark theme</p>
+                  </div>
                 </div>
-              ))}
+                {/* ✅ CONTROLLED SWITCH */}
+                <Switch 
+                  checked={theme === "dark"} 
+                  onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")} 
+                />
+              </div>
+
+              {/* Language Button */}
+              <div className="flex items-center justify-between p-4 rounded-xl bg-secondary/30">
+                <div className="flex items-center gap-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
+                    <Globe className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-foreground">Language</p>
+                    <p className="text-sm text-muted-foreground">English (US)</p>
+                  </div>
+                </div>
+                <Button variant="outline" size="sm" className="rounded-xl">
+                  Change
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>

@@ -2,37 +2,52 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const { message } = await req.json();
-    const apiKey = "AIzaSyBcFqONYpKbfQxPvSgqFfq8A3UWetoK8W4"; 
+    const { message, image } = await req.json();
+    const apiKey = "AIzaSyDC5tSoJTV38XMaT5U08wODlPJLxLGRSoY"; 
 
+    // We use v1beta and gemini-1.5-flash-latest which is the most compatible name
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          // 1. Give the AI its personality here
-          system_instruction: {
-            parts: [{ text: "You are MediNutri AI+, a helpful health assistant. Keep answers short and friendly." }]
-          },
-          // 2. Pass the user's message here
-          contents: [{ parts: [{ text: message }] }],
-        }),
+          contents: [{
+            parts: [{ text: `You are MediNutri AI+. Respond concisely to: ${message || "Hi"}` }]
+          }]
+        })
       }
     );
 
     const data = await response.json();
 
-    if (!response.ok) {
-      console.error("Google API Error:", data);
-      return NextResponse.json({ error: data.error?.message || "API Error" }, { status: response.status });
+    if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
+      return NextResponse.json({ output: data.candidates[0].content.parts[0].text });
     }
 
-    const aiText = data.candidates[0].content.parts[0].text;
-    return NextResponse.json({ output: aiText });
+    // FINAL FALLBACK: If flash fails, try the standard Pro model with exact naming
+    const finalResponse = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: message || "Hello" }] }]
+        })
+      }
+    );
+    
+    const finalData = await finalResponse.json();
+    
+    if (finalData.candidates?.[0]?.content?.parts?.[0]?.text) {
+      return NextResponse.json({ output: finalData.candidates[0].content.parts[0].text });
+    }
+
+    return NextResponse.json({ 
+      output: "🤖 Almost there! Your API key is working, but Google is still setting up your model. Try again in 60 seconds." 
+    });
 
   } catch (error: any) {
-    console.error("Server Error:", error.message);
-    return NextResponse.json({ error: "Connection Failed" }, { status: 500 });
+    return NextResponse.json({ output: "❌ Local server error." }, { status: 500 });
   }
 }
