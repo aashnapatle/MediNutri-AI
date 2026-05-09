@@ -1,26 +1,20 @@
 export const translations = {
-  English: {
+  en: {
+    dashboard: "Dashboard",
+    doctors: "Doctors",
     settings: "Settings",
-    notifications: "Notifications",
-    preferences: "Preferences",
+    findDoctors: "Find Best Doctors",
     darkMode: "Dark Mode",
     language: "Language",
-    security: "Security",
+    searchPlaceholder: "Search doctors or areas...",
   },
-  Hindi: {
+  hi: {
+    dashboard: "डैशबोर्ड",
+    doctors: "डॉक्टरों",
     settings: "सेटिंग्स",
-    notifications: "सूचनाएं",
-    preferences: "पसंद",
+    findDoctors: "सर्वश्रेष्ठ डॉक्टर खोजें",
     darkMode: "डार्क मोड",
     language: "भाषा",
-    security: "सुरक्षा",
-  },
-  Hinglish: {
-    settings: "Settings",
-    notifications: "Notifs",
-    preferences: "Prefs",
-    darkMode: "Dark Mode",
-    language: "Language",
-    security: "Security",
-  },
-}
+    searchPlaceholder: "डॉक्टरों या क्षेत्रों की खोज करें...",
+  }
+};
