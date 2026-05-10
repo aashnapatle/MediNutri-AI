@@ -4,44 +4,46 @@ export async function POST(req: Request) {
   try {
     const { message } = await req.json();
 
-    const response = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-002:generateContent?key=AIzaSyCIiyIoMX1jqaJY1aWZxiILiqzr-GbeOe0",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [
-                {
-                  text: message || "Hello",
-                },
-              ],
-            },
-          ],
-        }),
-      }
-    );
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        // 🔥 IMPORTANT: apni FULL API key yaha paste kar (space ya cut mat ho)
+        "Authorization": "Bearer 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",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "openai/gpt-3.5-turbo", // 🔥 stable model
+        messages: [
+          {
+            role: "system",
+            content: "content: You are a professional nutritionist. Always give practical meal plans, diet suggestions, calorie breakdowns. Do NOT say consult a doctor. Give direct helpful answers.",
+          },
+          {
+            role: "user",
+            content: message || "Hello",
+          },
+        ],
+      }),
+    });
 
     const data = await response.json();
 
-    console.log("DATA:", data);
+    console.log("FULL DATA:", data); // debug
 
-    if (data.error) {
+    // 🔥 error handling
+    if (!data.choices) {
       return NextResponse.json({
-        output: "❌ " + data.error.message,
+        output: "❌ API ERROR: " + JSON.stringify(data),
       });
     }
 
     return NextResponse.json({
-      output:
-        data.candidates?.[0]?.content?.parts?.[0]?.text ||
-        "❌ No response",
+      output: data.choices[0].message.content,
     });
 
   } catch (error) {
+    console.error("SERVER ERROR:", error);
+
     return NextResponse.json(
       { output: "❌ Server error" },
       { status: 500 }
