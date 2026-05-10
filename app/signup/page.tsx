@@ -1,74 +1,99 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Eye, EyeOff } from "lucide-react"
+
+import { createUserWithEmailAndPassword } from "firebase/auth"
+import { doc, getFirestore, setDoc } from "firebase/firestore"
+import { auth } from "@/lib/auth"
+
+const db = getFirestore()
 
 export default function SignupPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false)
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const router = useRouter()
 
-  const handleSignup = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
 
     if (!email || !password) {
-      alert("Enter email & password");
-      return;
+      alert("Enter email & password")
+      return
     }
 
-    alert("Account created 🎉");
-    router.push("/login");
-  };
+    try {
+      const userCred = await createUserWithEmailAndPassword(auth, email, password)
+      const user = userCred.user
+
+      // 🔥 AUTO SAVE USER DATA
+      await setDoc(doc(db, "users", user.uid), {
+        email: user.email,
+        createdAt: new Date()
+      })
+
+      alert("Signup success ✅")
+      router.push("/profile")
+
+    } catch (error: any) {
+      alert(error.message)
+    }
+  }
 
   return (
-    <div className="min-h-screen bg-[url('/sign-up.png')] bg-cover bg-center flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="w-full max-w-md p-8 rounded-2xl shadow-xl bg-white/10 backdrop-blur">
 
-      {/* same login style card */}
-      <div className="backdrop-blur-2xl bg-white/20 border border-white/30 shadow-2xl rounded-3xl p-10 w-full max-w-md">
-
-        <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">
+        <h1 className="text-3xl font-bold text-center mb-6">
           Create Account
-        </h2>
+        </h1>
 
-        <form onSubmit={handleSignup} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
 
-          <input
+          <Input
             type="email"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-3 rounded-xl border border-white/40 bg-white/30 focus:outline-none focus:ring-2 focus:ring-purple-400"
           />
 
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-3 rounded-xl border border-white/40 bg-white/30 focus:outline-none focus:ring-2 focus:ring-purple-400"
-          />
+          <div className="relative">
+            <Input
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
 
-          <button
-            type="submit"
-            className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 rounded-xl font-semibold hover:scale-105 transition"
-          >
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2"
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
+
+          <Button type="submit" className="w-full">
             Sign Up
-          </button>
+          </Button>
+
+          <p className="text-center text-sm">
+            Already have an account?{" "}
+            <span
+              onClick={() => router.push("/login")}
+              className="text-blue-500 cursor-pointer"
+            >
+              Login
+            </span>
+          </p>
 
         </form>
-
-        {/* extra like login */}
-        <p className="text-center text-sm mt-4 text-gray-700">
-          Already have an account?{" "}
-          <span
-            className="text-purple-600 cursor-pointer font-medium"
-            onClick={() => router.push("/login")}
-          >
-            Login
-          </span>
-        </p>
-
       </div>
     </div>
-  );
+  )
 }
