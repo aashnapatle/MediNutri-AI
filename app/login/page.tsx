@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Eye, EyeOff } from "lucide-react"
-
+import { doc, getDoc, setDoc } from "firebase/firestore"
+import { db } from "@/lib/firestore"
 import { signInWithEmailAndPassword } from "firebase/auth"
 import { auth } from "@/lib/auth"
 
@@ -23,13 +24,30 @@ export default function LoginPage() {
       return
     }
 
-    try {
-      await signInWithEmailAndPassword(auth, email, password)
-      alert("Login success ✅")
-      router.push("/profile")
-    } catch (error: any) {
-      alert(error.message)
-    }
+   try {
+      const res = await signInWithEmailAndPassword(auth, email, password)
+
+      const user = res.user
+
+      const docRef = doc(db, "users", user.uid)
+      const snap = await getDoc(docRef)
+
+  // agar user doc exist nahi karta
+      if (!snap.exists()) {
+        await setDoc(docRef, {
+         email: user.email,
+         name: "",
+         phone: "",
+         location: "",
+    })
+  }
+
+  alert("Login success ✅")
+  router.push("/profile")
+
+} catch (error: any) {
+  alert(error.message)
+}
   }
 
   return (

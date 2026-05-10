@@ -8,9 +8,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Input } from "@/components/ui/input"
 import { Mail, Phone, MapPin, Calendar, Edit2 } from "lucide-react"
 
-import { doc, setDoc, getDoc, getFirestore } from "firebase/firestore"
 import { auth } from "@/lib/auth"
-const db = getFirestore()
+import { db } from "@/lib/firestore"
+import { doc, getDoc, setDoc } from "firebase/firestore"
+import { onAuthStateChanged } from "firebase/auth" // ⭐ added
 
 export default function ProfilePage() {
 
@@ -19,28 +20,55 @@ export default function ProfilePage() {
     email: "",
     phone: "",
     location: "",
+    height: "",
+    weight: "",
+    age: "",
+    bloodType: "",
   })
 
-  // 🔥 LOAD DATA
+  // 🔥 LOAD DATA (FIXED)
   useEffect(() => {
-    const fetchData = async () => {
-      const user = auth.currentUser
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) return
 
       const snap = await getDoc(doc(db, "users", user.uid))
+
       if (snap.exists()) {
-        setForm(snap.data() as any)
+        setForm({
+          name: snap.data().name || "",
+          email: snap.data().email || user.email || "",
+          phone: snap.data().phone || "",
+          location: snap.data().location || "",
+          height: snap.data().height || "",
+          weight: snap.data().weight || "",
+          age: snap.data().age || "",
+          bloodType: snap.data().bloodType || "",
+        })
+      } else {
+        setForm((prev) => ({
+          ...prev,
+          email: user.email || "",
+        }))
       }
-    }
-    fetchData()
+    })
+
+    return () => unsubscribe()
   }, [])
 
-  // 🔥 SAVE DATA
+  // 🔥 SAVE DATA (FIXED)
   const handleSave = async () => {
     const user = auth.currentUser
     if (!user) return alert("Login first")
 
-    await setDoc(doc(db, "users", user.uid), form)
+    await setDoc(
+      doc(db, "users", user.uid),
+      {
+        ...form,
+        email: auth.currentUser?.email, // ⭐ protect email
+      },
+      { merge: true } // ⭐ prevent overwrite
+    )
+
     alert("Saved ✅")
   }
 
@@ -97,25 +125,58 @@ export default function ProfilePage() {
               <Input
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
+                placeholder="Enter your name"
                 className="h-12 rounded-xl"
               />
 
               <Input
                 value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                placeholder="Your email"
+                readOnly
                 className="h-12 rounded-xl"
               />
 
               <Input
                 value={form.phone}
-                onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                placeholder="Enter phone number"
+                onChange={(e) => {
+                  const value = e.target.value.replace(/\D/g, "")
+                  if (value.length <= 10) {
+                    setForm({ ...form, phone: value })
+                  }
+                }}
                 className="h-12 rounded-xl"
               />
 
               <Input
                 value={form.location}
+                placeholder="Enter your location"
                 onChange={(e) => setForm({ ...form, location: e.target.value })}
                 className="h-12 rounded-xl"
+              />
+
+              <Input
+                value={form.height}
+                onChange={(e) => setForm({ ...form, height: e.target.value })}
+                placeholder="Height (cm)"
+              />
+
+              <Input
+                value={form.weight}
+                onChange={(e) => setForm({ ...form, weight: e.target.value })}
+                placeholder="Weight (kg)"
+              />
+
+              <Input
+                value={form.age}
+                onChange={(e) => setForm({ ...form, age: e.target.value })}
+                placeholder="Age"
+              />
+
+              <Input
+                value={form.bloodType}
+                onChange={(e) => setForm({ ...form, bloodType: e.target.value })}
+                placeholder="Blood Type (O+, A+)"
               />
 
             </div>
@@ -126,26 +187,26 @@ export default function ProfilePage() {
           </CardContent>
         </Card>
 
-        {/* Health Stats (unchanged UI) */}
+        {/* Health Stats */}
         <Card className="rounded-2xl border-0 shadow-md lg:col-span-3">
           <CardContent className="p-6">
             <h3 className="text-lg font-semibold text-foreground mb-6">Health Information</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="text-center p-4 rounded-xl bg-secondary/30">
                 <p className="text-sm text-muted-foreground">Height</p>
-                <p className="text-xl font-semibold">--</p>
+                <p className="text-xl font-semibold">{form.height || "--"}</p>
               </div>
               <div className="text-center p-4 rounded-xl bg-secondary/30">
                 <p className="text-sm text-muted-foreground">Weight</p>
-                <p className="text-xl font-semibold">--</p>
+                <p className="text-xl font-semibold">{form.weight || "--"}</p>
               </div>
               <div className="text-center p-4 rounded-xl bg-secondary/30">
                 <p className="text-sm text-muted-foreground">Age</p>
-                <p className="text-xl font-semibold">--</p>
+                <p className="text-xl font-semibold">{form.age || "--"}</p>
               </div>
               <div className="text-center p-4 rounded-xl bg-secondary/30">
                 <p className="text-sm text-muted-foreground">Blood Type</p>
-                <p className="text-xl font-semibold">--</p>
+                <p className="text-xl font-semibold">{form.bloodType || "--"}</p>
               </div>
             </div>
           </CardContent>
