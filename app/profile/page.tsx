@@ -92,7 +92,6 @@ export default function ProfilePage() {
             </div>
 
             <h2 className="text-xl font-semibold text-foreground mt-4">{form.name}</h2>
-            <p className="text-sm text-muted-foreground">Premium Member</p>
 
             <div className="mt-6 space-y-3 text-left">
               <div className="flex items-center gap-3 text-sm">
