@@ -8,8 +8,8 @@ export async function POST(req: Request) {
       method: "POST",
       headers: {
         // 🔥 IMPORTANT: apni FULL API key yaha paste kar (space ya cut mat ho)
-        "Authorization": "Bearer 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",
-        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({
         model: "openai/gpt-3.5-turbo", // 🔥 stable model
