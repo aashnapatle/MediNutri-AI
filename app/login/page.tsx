@@ -3,17 +3,21 @@
 import { useState, useEffect, useRef } from "react"
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion"
 import { Mail, Lock, Eye, EyeOff, Heart, Droplets, Moon, Footprints } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 export default function LoginPage() {
+  const router = useRouter()
   const [mounted, setMounted] = useState(false)
 
-useEffect(() => {
-  setMounted(true)
-}, [])
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [rememberMe, setRememberMe] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
   const mouseX = useMotionValue(0)
@@ -27,23 +31,19 @@ useEffect(() => {
   const sphereY = useTransform(springY, [-0.5, 0.5], [-20, 20])
   const cardRotateX = useTransform(springY, [-0.5, 0.5], [5, -5])
   const cardRotateY = useTransform(springX, [-0.5, 0.5], [-5, 5])
-const waterX = useTransform(springX, [-0.5, 0.5], [22, -22])
-const waterY = useTransform(springY, [-0.5, 0.5], [-8, 8])
-
-const heartX = useTransform(springX, [-0.5, 0.5], [-22, 22])
-const heartY = useTransform(springY, [-0.5, 0.5], [10, -10])
-
-const stepsX = useTransform(springX, [-0.5, 0.5], [16, -16])
-const stepsY = useTransform(springY, [-0.5, 0.5], [-12, 12])
-
-const sleepX = useTransform(springX, [-0.5, 0.5], [-16, 16])
-const sleepY = useTransform(springY, [-0.5, 0.5], [14, -14])
-
-const syringeX = useTransform(springX, [-0.5, 0.5], [8, -8])
-const dnaX = useTransform(springX, [-0.5, 0.5], [-10, 10])
-const stethoX = useTransform(springX, [-0.5, 0.5], [6, -6])
-const pillX = useTransform(springX, [-0.5, 0.5], [5, -5])
-const crossX = useTransform(springX, [-0.5, 0.5], [-7, 7])
+  const waterX = useTransform(springX, [-0.5, 0.5], [22, -22])
+  const waterY = useTransform(springY, [-0.5, 0.5], [-8, 8])
+  const heartX = useTransform(springX, [-0.5, 0.5], [-22, 22])
+  const heartY = useTransform(springY, [-0.5, 0.5], [10, -10])
+  const stepsX = useTransform(springX, [-0.5, 0.5], [16, -16])
+  const stepsY = useTransform(springY, [-0.5, 0.5], [-12, 12])
+  const sleepX = useTransform(springX, [-0.5, 0.5], [-16, 16])
+  const sleepY = useTransform(springY, [-0.5, 0.5], [14, -14])
+  const syringeX = useTransform(springX, [-0.5, 0.5], [8, -8])
+  const dnaX = useTransform(springX, [-0.5, 0.5], [-10, 10])
+  const stethoX = useTransform(springX, [-0.5, 0.5], [6, -6])
+  const pillX = useTransform(springX, [-0.5, 0.5], [5, -5])
+  const crossX = useTransform(springX, [-0.5, 0.5], [-7, 7])
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -58,10 +58,51 @@ const crossX = useTransform(springX, [-0.5, 0.5], [-7, 7])
     window.addEventListener("mousemove", handleMouseMove)
     return () => window.removeEventListener("mousemove", handleMouseMove)
   }, [mouseX, mouseY])
- 
 
-if (!mounted) return null
+  if (!mounted) return null
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!email || !password) {
+      alert("Please fill all fields")
+      return
+    }
+
+    setIsLoading(true)
+
+    // Check if user is registered
+    const registeredEmail = localStorage.getItem("registered_email")
+    const registeredPassword = localStorage.getItem("registered_password")
+
+    setTimeout(() => {
+      setIsLoading(false)
+
+      if (!registeredEmail) {
+        // User not registered - ask them to sign up
+        const wantsToRegister = confirm("You don't have an account yet. Would you like to register?")
+        if (wantsToRegister) {
+          router.push("/signup")
+        }
+        return
+      }
+
+      if (email === registeredEmail && password === registeredPassword) {
+        // Successful login
+        if (rememberMe) {
+          localStorage.setItem("remember_me", "true")
+        }
+        router.push("/dashboard")
+      } else {
+        alert("Invalid email or password. Please try again.")
+      }
+    }, 1000)
+  }
+
+  const handleSignUpClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    router.push("/signup")
+  }
 
   return (
     <div ref={containerRef} className="min-h-screen bg-[#050505] relative overflow-hidden flex items-center justify-center">
@@ -365,7 +406,7 @@ if (!mounted) return null
               <motion.g animate={{ x: [0, 2, 0] }} transition={{ duration: 0.4, repeat: Infinity }}>
                 <path d="M20 22 L30 27 L40 19 M30 27 L30 38 L22 50 M30 38 L42 48" stroke="#ff2d95" strokeWidth="2.8" strokeLinecap="round" />
               </motion.g>
-            </svg>
+            </svg> 
           </div>
           <div className="flex items-center gap-2 mb-1">
             <svg className="w-4 h-4 text-pink-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>
@@ -379,12 +420,11 @@ if (!mounted) return null
 
       {/* Calories Card - Top Right */}
       <motion.div 
-  className="absolute top-[15%] right-[6%] z-10"
-  animate={{ y: [0, -10, 0] }}
-  transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
-  style={{ x: cardX, y: cardY }}
->
-        
+        className="absolute top-[15%] right-[6%] z-10"
+        animate={{ y: [0, -10, 0] }}
+        transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
+        style={{ x: cardX, y: cardY }}
+      >
         <div className="relative bg-[rgba(18,8,28,0.8)] backdrop-blur-xl rounded-[18px] p-4 border border-pink-500/40 w-[168px] shadow-[0_0_35px_rgba(255,45,149,0.18)] hover:border-pink-400/70 transition-all">
           <div className="absolute top-1 right-1 opacity-65">
             <svg width="52" height="52" viewBox="0 0 52 52">
@@ -566,7 +606,7 @@ if (!mounted) return null
         className="absolute top-[26%] left-[20%] opacity-45 z-5"
         animate={{ y: [0, -10, 0], rotate: [-45, -40, -45] }}
         transition={{ duration: 5, repeat: Infinity }}
-       style={{ x: heartX, y: heartY }}
+        style={{ x: heartX, y: heartY }}
       >
         <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#ff2d95" strokeWidth="1.5">
           <path d="M18 2l4 4-2 2-4-4z M7.5 13.5L11 10 M5 16l2.5-2.5 M2 19l3-3 M10 7l7 7" />
@@ -578,7 +618,7 @@ if (!mounted) return null
         className="absolute top-[13%] right-[20%] opacity-55 z-5"
         animate={{ y: [0, -8, 0], rotateY: [0, 180, 360] }}
         transition={{ duration: 7, repeat: Infinity }}
-      style={{ x: dnaX }}
+        style={{ x: dnaX }}
       >
         <svg width="38" height="52" viewBox="0 0 38 52" fill="none" stroke="#ff2d95" strokeWidth="1.5">
           <path d="M10 4 Q26 12 10 20 Q-6 28 10 36 Q26 44 10 52" />
@@ -608,7 +648,7 @@ if (!mounted) return null
         className="absolute top-[53%] left-[23%] opacity-40 z-5"
         animate={{ y: [0, -6, 0], rotate: [-20, 20, -20] }}
         transition={{ duration: 3.8, repeat: Infinity }}
-       style={{ x: sleepX, y: sleepY }}
+        style={{ x: sleepX, y: sleepY }}
       >
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ff2d95" strokeWidth="1.5">
           <path d="M10.5 20.5L3.5 13.5a4.95 4.95 0 1 1 7-7l7 7a4.95 4.95 0 1 1-7 7z" />
@@ -633,23 +673,38 @@ if (!mounted) return null
         className="relative z-30 w-full max-w-[395px] mx-4"
         style={{ x: dnaX }}
       >
-        <div className="bg-white/[0.94] backdrop-blur-2xl rounded-[26px] p-7 shadow-[0_0_70px_rgba(255,45,149,0.22)] border border-pink-200/40">
+        <motion.div 
+          className="bg-white/[0.94] backdrop-blur-2xl rounded-[26px] p-7 shadow-[0_0_70px_rgba(255,45,149,0.22)] border border-pink-200/40"
+          initial={{ opacity: 0, y: 30, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+        >
           <div className="text-center mb-6">
-            <h2 className="text-[25px] font-bold text-gray-800 mb-1.5">Welcome Back</h2>
-            <p className="text-gray-500 text-sm">Sign in to continue your health journey</p>
+            <motion.h2 
+              className="text-[25px] font-bold text-gray-800 mb-1.5"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              Welcome Back
+            </motion.h2>
+            <motion.p 
+              className="text-gray-500 text-sm"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              Sign in to continue your health journey
+            </motion.p>
           </div>
-         <form
-  className="space-y-3.5"
-  onSubmit={(e) => {
-    e.preventDefault()
-    if (!email || !password) {
-      alert("Please fill all fields")
-      return
-    }
-    window.location.href = "/dashboard"
-  }}
->
-            <div className="relative">
+          
+          <form className="space-y-3.5" onSubmit={handleSubmit}>
+            <motion.div 
+              className="relative"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+            >
               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input 
                 type="email" 
@@ -658,9 +713,14 @@ if (!mounted) return null
                 onChange={(e) => setEmail(e.target.value)} 
                 className="w-full bg-pink-50/70 border border-pink-200/90 rounded-xl py-3.5 pl-12 pr-4 text-gray-700 placeholder-gray-400 focus:outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-200 transition-all text-sm" 
               />
-            </div>
+            </motion.div>
             
-            <div className="relative">
+            <motion.div 
+              className="relative"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.35 }}
+            >
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input 
                 type={showPassword ? "text" : "password"} 
@@ -672,34 +732,63 @@ if (!mounted) return null
               <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
                 {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
-            </div>
+            </motion.div>
             
-            <div className="flex items-center justify-between text-sm pt-0.5">
+            <motion.div 
+              className="flex items-center justify-between text-sm pt-0.5"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+            >
               <label className="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} className="w-4 h-4 rounded border-gray-300 text-pink-500 focus:ring-pink-400" />
                 <span className="text-gray-600">Remember me</span>
               </label>
               <a href="#" className="text-gray-500 hover:text-pink-500 transition-colors">Forgot Password?</a>
-            </div>
+            </motion.div>
             
             <motion.button 
               type="submit" 
               className="w-full bg-gradient-to-r from-pink-400 via-pink-500 to-pink-500 hover:from-pink-500 hover:via-pink-600 hover:to-pink-600 text-white font-semibold py-3.5 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-[0_6px_25px_rgba(255,45,149,0.35)] hover:shadow-[0_8px_35px_rgba(255,45,149,0.45)] mt-1"
               whileHover={{ scale: 1.015, y: -1 }}
               whileTap={{ scale: 0.985 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.45 }}
+              disabled={isLoading}
             >
-              <span className="text-[15px]">Login</span>
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+              {isLoading ? (
+                <motion.div 
+                  className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                />
+              ) : (
+                <>
+                  <span className="text-[15px]">Login</span>
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                </>
+              )}
             </motion.button>
           </form>
           
-          <div className="flex items-center gap-4 my-5">
+          <motion.div 
+            className="flex items-center gap-4 my-5"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+          >
             <div className="flex-1 h-px bg-gray-200" />
             <span className="text-gray-400 text-sm">or continue with</span>
             <div className="flex-1 h-px bg-gray-200" />
-          </div>
+          </motion.div>
           
-          <div className="flex justify-center gap-4">
+          <motion.div 
+            className="flex justify-center gap-4"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.55 }}
+          >
             <motion.button 
               className="w-12 h-12 rounded-full bg-white border border-gray-200 flex items-center justify-center shadow-sm hover:shadow-md transition-all"
               whileHover={{ scale: 1.08 }}
@@ -721,14 +810,19 @@ if (!mounted) return null
             >
               <Heart className="w-5 h-5 text-white fill-white" />
             </motion.button>
-          </div>
+          </motion.div>
           
-          <p className="text-center mt-5 text-gray-500 text-sm">
+          <motion.p 
+            className="text-center mt-5 text-gray-500 text-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+          >
             {"Don't have an account? "}
-            <a href="#" className="text-pink-500 hover:text-pink-600 transition-colors font-semibold hover:underline">Sign up</a>
-          </p>
-        </div>
+            <a href="/signup" onClick={handleSignUpClick} className="text-pink-500 hover:text-pink-600 transition-colors font-semibold hover:underline">Sign up</a>
+          </motion.p>
+        </motion.div>
       </motion.div>
     </div>
   )
-}   
+}

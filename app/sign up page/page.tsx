@@ -31,6 +31,8 @@ export default function SignupPage() {
   
   const sphereX = useTransform(springX, [-0.5, 0.5], [-20, 20])
   const sphereY = useTransform(springY, [-0.5, 0.5], [-20, 20])
+  const cardRotateX = useTransform(springY, [-0.5, 0.5], [5, -5])
+  const cardRotateY = useTransform(springX, [-0.5, 0.5], [-5, 5])
   const waterX = useTransform(springX, [-0.5, 0.5], [22, -22])
   const waterY = useTransform(springY, [-0.5, 0.5], [-8, 8])
   const heartX = useTransform(springX, [-0.5, 0.5], [-22, 22])
@@ -81,12 +83,15 @@ export default function SignupPage() {
     
     setIsLoading(true)
     
+    // Simulate registration
     setTimeout(() => {
+      // Store user data in localStorage for demo
       localStorage.setItem("registered_email", email)
       localStorage.setItem("registered_password", password)
       localStorage.setItem("registered_name", fullName)
       
       setIsLoading(false)
+      // Redirect to login page after successful signup
       router.push("/login")
     }, 1500)
   }
@@ -517,7 +522,7 @@ export default function SignupPage() {
         <div className="relative bg-[rgba(18,8,28,0.8)] backdrop-blur-xl rounded-[18px] p-4 border border-pink-500/40 w-[178px] shadow-[0_0_35px_rgba(255,45,149,0.18)] hover:border-pink-400/70 transition-all">
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center gap-2">
-              <svg className="w-4 h-4 text-pink-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 11 3.8 11 8c0 1.25-.5 2-1 3.5-.5 1.5-1 2.5-1 3.5h2M10 16v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C12.63 2 11 3.8 11 8c0 1.25.5 2 1 3.5.5 1.5 1 2.5 1 3.5h2" /><path d="M16 16v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C12.63 2 11 3.8 11 8c0 1.25.5 2 1 3.5.5 1.5 1 2.5 1 3.5h2" /><path d="M20 16v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C16.63 2 15 3.8 15 8c0 1.25.5 2 1 3.5.5 1.5 1 2.5 1 3.5h2" /></svg>
+              <svg className="w-4 h-4 text-pink-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 11 3.8 11 8c0 1.25-.5 2-1 3.5-.5 1.5-1 2.5-1 3.5h2M10 16v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C6.63 2 5 3.8 5 8c0 1.25.5 2 1 3.5.5 1.5 1 2.5 1 3.5h-2" /><path d="M16 16v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C12.63 2 11 3.8 11 8c0 1.25.5 2 1 3.5.5 1.5 1 2.5 1 3.5h2" /><path d="M20 16v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C16.63 2 15 3.8 15 8c0 1.25.5 2 1 3.5.5 1.5 1 2.5 1 3.5h2" /></svg>
               <span className="text-white/85 text-sm font-medium">Steps</span>
             </div>
             <div className="relative w-10 h-10">
