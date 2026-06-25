@@ -1,180 +1,164 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { DashboardLayout } from "@/components/dashboard-layout"
-import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Send, Bot, User } from "lucide-react"
+import { Send, Loader2, Camera, X, Activity, Utensils, Info } from "lucide-react"
 
-interface Message {
-  id: number
-  role: "user" | "assistant"
-  content: string
-  timestamp: string
-}
-
-const initialMessages: Message[] = [
-  {
-    id: 1,
-    role: "user",
-    content: "What should I eat to lose weight?",
-    timestamp: "10:30 AM",
-  },
-  {
-    id: 2,
-    role: "assistant",
-    content: "To lose weight, you should focus on a balanced diet with fewer calories and more nutrients. Here are some tips:",
-    timestamp: "10:30 AM",
-  },
-]
-
-const dietTips = [
-  "Eat more vegetables and fruits",
-  "Choose whole grains",
-  "Avoid sugar and processed foods",
-  "Drink plenty of water",
-  "Do regular exercise",
-]
-
-const aiResponses: Record<string, string> = {
-  default: "I can help you with diet and nutrition advice! Feel free to ask about meal plans, calorie intake, or healthy eating habits.",
-  weight: "For weight management, focus on a calorie deficit while maintaining proper nutrition. Aim for 500 calories below your maintenance level for healthy weight loss.",
-  protein: "Great sources of protein include lean meats, fish, eggs, legumes, and dairy. Aim for 0.8-1g of protein per pound of body weight if you're active.",
-  breakfast: "A healthy breakfast could include oatmeal with fruits, Greek yogurt with nuts, or eggs with whole grain toast. Avoid sugary cereals.",
-  water: "You should aim for 8-10 glasses of water daily. More if you're active or in hot weather. Staying hydrated helps metabolism and reduces hunger.",
+type Message = {
+  role: "ai" | "user";
+  content: string;
+  imageUrl?: string;
 }
 
 export default function ChatPage() {
-  const [messages, setMessages] = useState<Message[]>(initialMessages)
+  const [messages, setMessages] = useState<Message[]>([
+    { role: "ai", content: "🥗 MediNutri AI+ is ready!\n\nI can analyze your meals and track calories. Try uploading a photo of your food!" }
+  ])
   const [input, setInput] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [previewImage, setPreviewImage] = useState<string | null>(null)
+  const [base64Image, setBase64Image] = useState<string | null>(null)
+  
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
-  const handleSend = () => {
-    if (!input.trim()) return
-
-    const userMessage: Message = {
-      id: messages.length + 1,
-      role: "user",
-      content: input,
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight
     }
+  }, [messages, loading])
 
-    // Simple AI response logic
-    let response = aiResponses.default
-    const lowerInput = input.toLowerCase()
-    if (lowerInput.includes("weight") || lowerInput.includes("lose")) {
-      response = aiResponses.weight
-    } else if (lowerInput.includes("protein")) {
-      response = aiResponses.protein
-    } else if (lowerInput.includes("breakfast")) {
-      response = aiResponses.breakfast
-    } else if (lowerInput.includes("water")) {
-      response = aiResponses.water
+  const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        const fullDataUrl = reader.result as string
+        setPreviewImage(fullDataUrl)
+        setBase64Image(fullDataUrl.split(",")[1])
+      }
+      reader.readAsDataURL(file)
     }
-
-    const aiMessage: Message = {
-      id: messages.length + 2,
-      role: "assistant",
-      content: response,
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-    }
-
-    setMessages([...messages, userMessage, aiMessage])
-    setInput("")
   }
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault()
-      handleSend()
+  const sendMessage = async (overrideMsg?: string) => {
+    const activeMsg = overrideMsg || input;
+    if ((!activeMsg.trim() && !base64Image) || loading) return
+    
+    const userMsg = activeMsg || "Analyze this meal"
+    setMessages(prev => [...prev, { role: "user", content: userMsg, imageUrl: previewImage || undefined }])
+    
+    setInput("")
+    setPreviewImage(null)
+    setBase64Image(null) 
+    setLoading(true)
+
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: userMsg, image: base64Image }),
+      })
+      const data = await res.json()
+      // Matches 'output' from your route.ts
+      setMessages(prev => [...prev, { role: "ai", content: data.output || "I couldn't process that. Try again!" }])
+    } catch (e) {
+      setMessages(prev => [...prev, { role: "ai", content: "❌ Connection error. Please check your internet." }])
+    } finally {
+      setLoading(false)
+      inputRef.current?.focus() 
     }
   }
 
   return (
-    <DashboardLayout
-      title="AI Health Assistant"
-      subtitle="Ask anything about health, diet, and fitness"
-    >
-      <Card className="rounded-2xl border-0 shadow-md h-[calc(100vh-180px)] flex flex-col">
-        <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
-          {/* Chat Messages */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-6">
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex gap-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}
-              >
-                {message.role === "assistant" && (
-                  <Avatar className="h-10 w-10 shrink-0 bg-primary/10">
-                    <AvatarFallback className="bg-primary/10 text-primary">
-                      <Bot className="h-5 w-5" />
-                    </AvatarFallback>
-                  </Avatar>
+    <DashboardLayout title="AI Health Assistant" subtitle="Intelligent Nutrition Tracking">
+      <div className="flex flex-col h-[80vh] bg-white rounded-3xl shadow-xl border border-pink-100 overflow-hidden max-w-4xl mx-auto">
+        
+        {/* Chat Body */}
+        <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-6 bg-gradient-to-b from-white to-pink-50/20">
+          {messages.map((m, i) => (
+            <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start animate-in slide-in-from-left-2"}`}>
+              <div className={`p-4 rounded-2xl max-w-[80%] shadow-sm ${
+                m.role === "user" 
+                  ? "bg-pink-500 text-white rounded-tr-none" 
+                  : "bg-white text-slate-700 border border-slate-100 rounded-tl-none font-medium"
+              }`}>
+                {m.imageUrl && (
+                  <img src={m.imageUrl} alt="Food" className="rounded-xl mb-3 border-2 border-white/20 shadow-inner max-h-60 w-full object-cover" />
                 )}
-
-                <div className={`max-w-[70%] ${message.role === "user" ? "order-1" : ""}`}>
-                  <div
-                    className={`rounded-2xl px-4 py-3 ${
-                      message.role === "user"
-                        ? "bg-primary text-primary-foreground rounded-br-md"
-                        : "bg-secondary text-foreground rounded-bl-md"
-                    }`}
-                  >
-                    <p className="text-sm">{message.content}</p>
-
-                    {/* Show diet tips after initial AI response */}
-                    {message.id === 2 && (
-                      <ul className="mt-3 space-y-2">
-                        {dietTips.map((tip, index) => (
-                          <li key={index} className="flex items-center gap-2 text-sm">
-                            <span className="h-2 w-2 rounded-full bg-primary shrink-0" />
-                            {tip}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                  <p className={`text-xs text-muted-foreground mt-1 ${message.role === "user" ? "text-right" : ""}`}>
-                    {message.timestamp}
-                  </p>
-                </div>
-
-                {message.role === "user" && (
-                  <Avatar className="h-10 w-10 shrink-0 bg-primary/10 order-2">
-                    <AvatarFallback className="bg-primary/10 text-primary">
-                      <User className="h-5 w-5" />
-                    </AvatarFallback>
-                  </Avatar>
-                )}
+                <p className="text-sm whitespace-pre-wrap leading-relaxed">{m.content}</p>
               </div>
-            ))}
-          </div>
-
-          {/* Input Area */}
-          <div className="p-4 border-t border-border">
-            <div className="flex gap-3">
-              <Input
-                placeholder="Type your message..."
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyPress}
-                className="flex-1 h-12 rounded-xl border-border bg-secondary/50"
-              />
-              <Button
-                onClick={handleSend}
-                className="h-12 w-12 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 p-0"
-              >
-                <Send className="h-5 w-5" />
-              </Button>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          ))}
+          {loading && (
+            <div className="flex justify-start animate-pulse">
+              <div className="bg-white border border-pink-100 p-4 rounded-2xl rounded-tl-none shadow-sm flex items-center gap-3">
+                <Loader2 className="h-4 w-4 animate-spin text-pink-500" />
+                <span className="text-xs font-bold text-pink-400 uppercase tracking-widest">Scanning Meal...</span>
+              </div>
+            </div>
+          )}
+        </div>
 
-      {/* Decorative */}
-      <div className="fixed bottom-4 right-4 pointer-events-none opacity-20 hidden xl:block">
-        <div className="text-[120px]">🤖</div>
+        {/* Action Tray & Input Area */}
+        <div className="p-4 bg-white border-t border-slate-100 space-y-4">
+          
+          {!previewImage && !input && (
+            <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+              <button onClick={() => sendMessage("Is this meal healthy?")} className="text-xs font-semibold px-3 py-1.5 bg-pink-50 text-pink-600 rounded-full border border-pink-100 hover:bg-pink-100 transition-colors flex items-center gap-1 shrink-0">
+                <Utensils size={12} /> Is this healthy?
+              </button>
+              <button onClick={() => sendMessage("Estimate calories")} className="text-xs font-semibold px-3 py-1.5 bg-pink-50 text-pink-600 rounded-full border border-pink-100 hover:bg-pink-100 transition-colors flex items-center gap-1 shrink-0">
+                <Activity size={12} /> Estimate calories
+              </button>
+              <button onClick={() => sendMessage("Show pro tips")} className="text-xs font-semibold px-3 py-1.5 bg-pink-50 text-pink-600 rounded-full border border-pink-100 hover:bg-pink-100 transition-colors flex items-center gap-1 shrink-0">
+                <Info size={12} /> Nutrition tips
+              </button>
+            </div>
+          )}
+
+          {previewImage && (
+            <div className="flex items-center gap-3 p-2 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+              <div className="relative h-16 w-16 group">
+                <img src={previewImage} className="h-full w-full object-cover rounded-lg shadow-md border-2 border-white" />
+                <button onClick={() => {setPreviewImage(null); setBase64Image(null)}} className="absolute -top-2 -right-2 bg-slate-900 text-white rounded-full p-1 shadow-lg hover:bg-red-500 transition-all">
+                  <X size={12} />
+                </button>
+              </div>
+              <div className="text-xs">
+                <p className="font-bold text-slate-700">Image Loaded</p>
+                <p className="text-slate-400">Ready for analysis...</p>
+              </div>
+            </div>
+          )}
+
+          <div className="flex gap-2 items-center bg-slate-100/80 p-2 rounded-2xl focus-within:bg-white focus-within:ring-2 focus-within:ring-pink-100 transition-all">
+            <input type="file" accept="image/*" onChange={handleImage} className="hidden" id="cam-input" />
+            <label htmlFor="cam-input" className="p-3 cursor-pointer hover:bg-white hover:shadow-md rounded-xl text-slate-500 hover:text-pink-500 transition-all">
+              <Camera size={20} />
+            </label>
+            
+            <Input 
+              ref={inputRef}
+              className="border-none bg-transparent focus-visible:ring-0 text-slate-700 font-medium placeholder:text-slate-400" 
+              value={input} 
+              onChange={e => setInput(e.target.value)} 
+              placeholder="Type a message or upload food..." 
+              onKeyDown={e => e.key === 'Enter' && sendMessage()} 
+            />
+            
+            <Button 
+              onClick={() => sendMessage()} 
+              disabled={loading || (!input.trim() && !previewImage)} 
+              className="rounded-xl bg-pink-500 hover:bg-pink-600 shadow-md h-11 w-11 p-0 shrink-0"
+            >
+              {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send size={20} />}
+            </Button>
+          </div>
+        </div>
       </div>
     </DashboardLayout>
   )
