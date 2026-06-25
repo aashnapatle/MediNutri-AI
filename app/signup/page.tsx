@@ -4,7 +4,15 @@ import { useState, useEffect, useRef } from "react"
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion"
 import { Mail, Lock, Eye, EyeOff, Heart, User, Check } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { auth, db } from "@/lib/firebase"
+import {
+  GoogleAuthProvider,
+  createUserWithEmailAndPassword,
+  signInWithPopup,
+  updateProfile,
+} from "firebase/auth"
 
+import { doc, setDoc } from "firebase/firestore"
 export default function SignupPage() {
   const router = useRouter()
   const [mounted, setMounted] = useState(false)
@@ -61,35 +69,76 @@ export default function SignupPage() {
 
   if (!mounted) return null
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
     if (!fullName || !email || !password || !confirmPassword) {
-      alert("Please fill all fields")
-      return
+      alert("Please fill all fields");
+      return;
     }
-    
+
     if (password !== confirmPassword) {
-      alert("Passwords do not match")
-      return
+      alert("Passwords do not match");
+      return;
     }
-    
+
     if (!agreeTerms) {
-      alert("Please agree to the Terms & Conditions")
-      return
+      alert("Please agree to the Terms & Conditions");
+      return;
     }
-    
-    setIsLoading(true)
-    
-    setTimeout(() => {
-      localStorage.setItem("registered_email", email)
-      localStorage.setItem("registered_password", password)
-      localStorage.setItem("registered_name", fullName)
-      
-      setIsLoading(false)
-      router.push("/login")
-    }, 1500)
-  }
+
+    try {
+      setIsLoading(true);
+
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      await updateProfile(userCredential.user, {
+        displayName: fullName,
+      });
+
+      await setDoc(doc(db, "users", userCredential.user.uid), {
+        uid: userCredential.user.uid,
+        name: fullName,
+        email,
+        createdAt: new Date(),
+      });
+
+      router.push("/dashboard");
+    } catch (error: any) {
+      alert(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignup = async () => {
+    try {
+      setIsLoading(true);
+
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+
+      await setDoc(
+        doc(db, "users", result.user.uid),
+        {
+          uid: result.user.uid,
+          name: result.user.displayName,
+          email: result.user.email,
+        },
+        { merge: true }
+      );
+
+      router.push("/dashboard");
+    } catch (error: any) {
+      alert(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div ref={containerRef} className="min-h-screen bg-[#050505] relative overflow-hidden flex items-center justify-center">
@@ -825,11 +874,13 @@ export default function SignupPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.65 }}
           >
-            <motion.button 
-              className="w-12 h-12 rounded-full bg-white border border-gray-200 flex items-center justify-center shadow-sm hover:shadow-md transition-all"
-              whileHover={{ scale: 1.08 }}
-              whileTap={{ scale: 0.94 }}
-            >
+          <motion.button
+           type="button"
+           onClick={handleGoogleSignup}
+           className="w-12 h-12 rounded-full bg-white border border-gray-200 flex items-center justify-center shadow-sm hover:shadow-md transition-all"
+           whileHover={{ scale: 1.08 }}
+           whileTap={{ scale: 0.94 }}
+>
               <svg className="w-5 h-5" viewBox="0 0 24 24"><path fill="#EA4335" d="M5.27 9.76A7.08 7.08 0 0 1 12 4.91c1.69 0 3.22.6 4.42 1.58l3.49-3.49A11.93 11.93 0 0 0 12 0 12 12 0 0 0 1.24 6.65l4.03 3.11z" /><path fill="#34A853" d="M16.04 18.01A7.4 7.4 0 0 1 12 19.09a7.08 7.08 0 0 1-6.73-4.82l-4.03 3.07A11.95 11.95 0 0 0 12 24c2.93 0 5.7-1.04 7.83-3l-3.79-2.99z" /><path fill="#4A90E2" d="M19.83 21c2.2-2.05 3.62-5.1 3.62-9 0-.71-.11-1.47-.27-2.18H12v4.63h6.44a5.9 5.9 0 0 1-2.4 3.56l3.79 2.99z" /><path fill="#FBBC05" d="M5.27 14.27A7.1 7.1 0 0 1 4.91 12c0-.78.13-1.53.36-2.24L1.24 6.65A11.93 11.93 0 0 0 0 12c0 1.92.44 3.73 1.24 5.33l4.03-3.06z" /></svg>
             </motion.button>
             <motion.button 

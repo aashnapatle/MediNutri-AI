@@ -28,36 +28,39 @@ export default function ProfilePage() {
 
   // 🔥 LOAD DATA (FIXED)
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (!user) return
+  const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    console.log("User:", user)
 
-      const snap = await getDoc(doc(db, "users", user.uid))
+    if (!user) return
 
-      if (snap.exists()) {
-        setForm({
-          name: snap.data().name || "",
-          email: snap.data().email || user.email || "",
-          phone: snap.data().phone || "",
-          location: snap.data().location || "",
-          height: snap.data().height || "",
-          weight: snap.data().weight || "",
-          age: snap.data().age || "",
-          bloodType: snap.data().bloodType || "",
-        })
-      } else {
-        setForm((prev) => ({
-          ...prev,
-          email: user.email || "",
-        }))
-      }
-    })
+    const snap = await getDoc(doc(db, "users", user.uid))
 
-    return () => unsubscribe()
-  }, [])
+    if (snap.exists()) {
+      setForm({
+        name: snap.data().name || "",
+        email: snap.data().email || user.email || "",
+        phone: snap.data().phone || "",
+        location: snap.data().location || "",
+        height: snap.data().height || "",
+        weight: snap.data().weight || "",
+        age: snap.data().age || "",
+        bloodType: snap.data().bloodType || "",
+      })
+    } else {
+      setForm((prev) => ({
+        ...prev,
+        email: user.email || "",
+      }))
+    }
+  })
+
+  return () => unsubscribe()
+}, [])
 
   // 🔥 SAVE DATA (FIXED)
   const handleSave = async () => {
     const user = auth.currentUser
+    console.log(auth.currentUser)
     if (!user) return alert("Login first")
 
     await setDoc(

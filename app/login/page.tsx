@@ -4,7 +4,9 @@ import { useState, useEffect, useRef } from "react"
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion"
 import { Mail, Lock, Eye, EyeOff, Heart, Droplets, Moon, Footprints } from "lucide-react"
 import { useRouter } from "next/navigation"
-
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth"
+import { auth } from "@/lib/auth"
 export default function LoginPage() {
   const router = useRouter()
   const [mounted, setMounted] = useState(false)
@@ -60,44 +62,36 @@ export default function LoginPage() {
   }, [mouseX, mouseY])
 
   if (!mounted) return null
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    if (!email || !password) {
-      alert("Please fill all fields")
-      return
-    }
+  try {
+    setIsLoading(true);
 
-    setIsLoading(true)
+    await signInWithEmailAndPassword(auth, email, password);
 
-    // Check if user is registered
-    const registeredEmail = localStorage.getItem("registered_email")
-    const registeredPassword = localStorage.getItem("registered_password")
-
-    setTimeout(() => {
-      setIsLoading(false)
-
-      if (!registeredEmail) {
-        // User not registered - ask them to sign up
-        const wantsToRegister = confirm("You don't have an account yet. Would you like to register?")
-        if (wantsToRegister) {
-          router.push("/signup")
-        }
-        return
-      }
-
-      if (email === registeredEmail && password === registeredPassword) {
-        // Successful login
-        if (rememberMe) {
-          localStorage.setItem("remember_me", "true")
-        }
-        router.push("/dashboard")
-      } else {
-        alert("Invalid email or password. Please try again.")
-      }
-    }, 1000)
+    router.push("/dashboard");
+  } catch (error: any) {
+    alert(error.message);
+  } finally {
+    setIsLoading(false);
   }
+};
+  const googleProvider = new GoogleAuthProvider();
+  const handleGoogleLogin = async () => {
+  try {
+    setIsLoading(true);
+
+    await signInWithPopup(auth, googleProvider);
+
+    router.push("/dashboard");
+  } catch (error: any) {
+    alert(error.message);
+  } finally {
+    setIsLoading(false);
+  }
+};
+  
 
   const handleSignUpClick = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -789,11 +783,13 @@ export default function LoginPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.55 }}
           >
-            <motion.button 
+            <motion.button
+              type="button"
+              onClick={handleGoogleLogin}
               className="w-12 h-12 rounded-full bg-white border border-gray-200 flex items-center justify-center shadow-sm hover:shadow-md transition-all"
               whileHover={{ scale: 1.08 }}
               whileTap={{ scale: 0.94 }}
-            >
+>
               <svg className="w-5 h-5" viewBox="0 0 24 24"><path fill="#EA4335" d="M5.27 9.76A7.08 7.08 0 0 1 12 4.91c1.69 0 3.22.6 4.42 1.58l3.49-3.49A11.93 11.93 0 0 0 12 0 12 12 0 0 0 1.24 6.65l4.03 3.11z" /><path fill="#34A853" d="M16.04 18.01A7.4 7.4 0 0 1 12 19.09a7.08 7.08 0 0 1-6.73-4.82l-4.03 3.07A11.95 11.95 0 0 0 12 24c2.93 0 5.7-1.04 7.83-3l-3.79-2.99z" /><path fill="#4A90E2" d="M19.83 21c2.2-2.05 3.62-5.1 3.62-9 0-.71-.11-1.47-.27-2.18H12v4.63h6.44a5.9 5.9 0 0 1-2.4 3.56l3.79 2.99z" /><path fill="#FBBC05" d="M5.27 14.27A7.1 7.1 0 0 1 4.91 12c0-.78.13-1.53.36-2.24L1.24 6.65A11.93 11.93 0 0 0 0 12c0 1.92.44 3.73 1.24 5.33l4.03-3.06z" /></svg>
             </motion.button>
             <motion.button 
