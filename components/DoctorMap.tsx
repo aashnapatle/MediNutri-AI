@@ -1,22 +1,18 @@
-'use client'
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
-import { useEffect } from 'react';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
+"use client";
 
-// Fix for marker icons
-const customIcon = new L.Icon({
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
+import { useEffect, useState } from "react";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
+
+const doctorIcon = L.divIcon({
+  className: "custom-doctor-icon",
+  html: `<div style="background-color: #ec4899; color: white; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); border: 2px solid white;">👨‍⚕️</div>`,
+  iconSize: [34, 34],
+  iconAnchor: [17, 17],
+  popupAnchor: [0, -18],
 });
 
-<<<<<<< Updated upstream
-// 1. This "FlyTo" component handles the movement logic
-function MapUpdater({ doctors }: { doctors: any[] }) {
-=======
-// Hospital Icon (Red Cross Badge)
 const hospitalIcon = L.divIcon({
   className: "custom-hospital-icon",
   html: `<div style="background-color: #ef4444; color: white; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); border: 2px solid white;">🏥</div>`,
@@ -48,33 +44,13 @@ interface DoctorMapProps {
 }
 
 function RecenterMap({ coords }: { coords: [number, number] }) {
->>>>>>> Stashed changes
   const map = useMap();
-
   useEffect(() => {
-    if (doctors.length > 0) {
-      // If there is only one doctor (like after a search), zoom in close
-      if (doctors.length === 1) {
-        map.flyTo(doctors[0].coordinates, 15, { duration: 1.5 });
-      } else {
-        // If there are multiple doctors, fit the map to show all of them
-        const bounds = L.latLngBounds(doctors.map(d => d.coordinates));
-        map.flyToBounds(bounds, { padding: [50, 50], duration: 1.5 });
-      }
-    }
-  }, [doctors, map]);
-
+    map.setView(coords, 13);
+  }, [coords, map]);
   return null;
 }
 
-<<<<<<< Updated upstream
-export default function DoctorMap({ doctors }: { doctors: any[] }) {
-  const jabalpurCenter: [number, number] = [23.1815, 79.9864];
-
-  return (
-    <div className="h-[400px] w-full">
-      <MapContainer center={jabalpurCenter} zoom={12} style={{ height: '100%', width: '100%' }}>
-=======
 export default function DoctorMap({ doctors, userCoords, hasLocationAccess }: DoctorMapProps) {
   const [nearbyHospitals, setNearbyHospitals] = useState<Hospital[]>([]);
   const [loadingHospitals, setLoadingHospitals] = useState(false);
@@ -99,7 +75,6 @@ export default function DoctorMap({ doctors, userCoords, hasLocationAccess }: Do
           body: query,
         });
 
-        // Check if the response is actually valid JSON and not an XML error
         const textResponse = await response.text();
         if (textResponse.trim().startsWith("<")) {
           throw new Error("Overpass returned XML/HTML error instead of JSON");
@@ -118,8 +93,7 @@ export default function DoctorMap({ doctors, userCoords, hasLocationAccess }: Do
 
         setNearbyHospitals(hospitals);
       } catch (err) {
-        console.warn("Could not query live hospitals (Overpass busy), using local fallback:", err);
-        // Fallback local hospitals offset around user coordinates so markers still appear
+        console.warn("Could not query live hospitals, using local fallback:", err);
         setNearbyHospitals([
           {
             id: 101,
@@ -167,30 +141,13 @@ export default function DoctorMap({ doctors, userCoords, hasLocationAccess }: Do
         className="w-full h-full rounded-2xl"
         style={{ minHeight: "360px", height: "100%", width: "100%" }}
       >
->>>>>>> Stashed changes
         <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; OpenStreetMap contributors'
         />
-        
-        {/* 2. Add the updater inside the MapContainer */}
-        <MapUpdater doctors={doctors} />
 
-<<<<<<< Updated upstream
-        {doctors.map((doc, idx) => (
-          <Marker key={idx} position={doc.coordinates} icon={customIcon}>
-            <Popup>
-              <div className="p-1">
-                <h4 className="font-bold text-pink-600">{doc.name}</h4>
-                <p className="text-xs text-gray-600">{doc.location}</p>
-              </div>
-            </Popup>
-          </Marker>
-        ))}
-=======
         {userCoords && <RecenterMap coords={[userCoords.lat, userCoords.lng]} />}
 
-        {/* Doctor Markers */}
         {doctors.map((doctor) => {
           const [lat, lng] = doctor.coordinates;
           const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
@@ -228,7 +185,6 @@ export default function DoctorMap({ doctors, userCoords, hasLocationAccess }: Do
           );
         })}
 
-        {/* Hospital Markers */}
         {nearbyHospitals.map((hospital) => {
           const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(hospital.name)}&center=${hospital.lat},${hospital.lng}`;
 
@@ -263,7 +219,6 @@ export default function DoctorMap({ doctors, userCoords, hasLocationAccess }: Do
             </Marker>
           );
         })}
->>>>>>> Stashed changes
       </MapContainer>
     </div>
   );
