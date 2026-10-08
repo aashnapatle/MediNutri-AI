@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
-import { signOut } from "firebase/auth"
-import { auth } from "@/lib/auth"
-import { cn } from "@/lib/utils"
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/auth";
+import { cn } from "@/lib/utils";
 
 import {
   LayoutDashboard,
@@ -16,7 +16,7 @@ import {
   Settings,
   LogOut,
   Heart,
-} from "lucide-react"
+} from "lucide-react";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -26,20 +26,20 @@ const navItems = [
   { href: "/chat", label: "AI Chat", icon: MessageCircle },
   { href: "/profile", label: "Profile", icon: User },
   { href: "/settings", label: "Settings", icon: Settings },
-]
+];
 
 export function Sidebar() {
-  const pathname = usePathname()
-  const router = useRouter()
+  const pathname = usePathname();
+  const router = useRouter();
 
   const handleLogout = async () => {
-  try {
-    await signOut(auth)
-    router.push("/login")
-  } catch (error) {
-    console.error("Logout failed:", error)
-  }
-}
+    try {
+      await signOut(auth);
+      router.push("/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
 
   return (
     <aside className="fixed left-0 top-0 z-40 h-screen w-64 bg-card border-r border-border">
@@ -57,7 +57,7 @@ export function Sidebar() {
         {/* Navigation */}
         <nav className="flex-1 space-y-1 px-3 py-4">
           {navItems.map((item) => {
-            const isActive = pathname === item.href
+            const isActive = pathname === item.href;
             return (
               <Link
                 key={item.href}
@@ -72,22 +72,26 @@ export function Sidebar() {
                 <item.icon className="h-5 w-5" />
                 {item.label}
               </Link>
-            )
+            );
           })}
         </nav>
 
         {/* Logout */}
-          <div className="border-t border-border p-3">
-  <button
-    onClick={handleLogout}
-    className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-primary hover:bg-secondary transition-colors"
-  >
-    <LogOut className="h-5 w-5" />
-    Logout
-  </button>
-</div>
-        
+        <div className="border-t border-border p-3">
+          <button
+            type="button"
+            suppressHydrationWarning
+            data-no-autofill="true"
+            onClick={handleLogout}
+            className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-primary hover:bg-secondary transition-colors"
+          >
+            <LogOut className="h-5 w-5" />
+            Logout
+          </button>
+        </div>
       </div>
     </aside>
-  )
+  );
 }
+
+export default Sidebar;
