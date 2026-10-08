@@ -1,31 +1,27 @@
-"use client"
+"use client";
 
-<<<<<<< Updated upstream
-=======
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import Sidebar from "@/components/sidebar";
 import { Doctor } from "@/components/DoctorMap";
->>>>>>> Stashed changes
 
+const DoctorMap = dynamic(() => import("@/components/DoctorMap"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-96 bg-pink-50/50 rounded-2xl flex items-center justify-center border border-pink-100 text-pink-500 font-medium">
+      Loading interactive map...
+    </div>
+  ),
+});
 
-import { DashboardLayout } from "@/components/dashboard-layout"
-import { Card, CardContent } from "@/components/ui/card"
-
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Star, MapPin } from "lucide-react"
-
-const doctors = [
+const doctorsList: Doctor[] = [
   {
     id: 1,
     name: "Dr. Priya Sharma",
     specialty: "Nutritionist",
     location: "Delhi, India",
     rating: 4.8,
-    image: "/placeholder-doctor-1.jpg",
-    initials: "PS",
-    bgColor: "bg-pink-100",
+    coordinates: [28.6139, 77.209],
   },
   {
     id: 2,
@@ -33,9 +29,7 @@ const doctors = [
     specialty: "General Physician",
     location: "Mumbai, India",
     rating: 4.7,
-    image: "/placeholder-doctor-2.jpg",
-    initials: "RV",
-    bgColor: "bg-blue-100",
+    coordinates: [19.076, 72.8777],
   },
   {
     id: 3,
@@ -43,9 +37,7 @@ const doctors = [
     specialty: "Dietician",
     location: "Bangalore, India",
     rating: 4.9,
-    image: "/placeholder-doctor-3.jpg",
-    initials: "AM",
-    bgColor: "bg-green-100",
+    coordinates: [12.9716, 77.5946],
   },
   {
     id: 4,
@@ -53,9 +45,7 @@ const doctors = [
     specialty: "Fitness Expert",
     location: "Pune, India",
     rating: 4.6,
-    image: "/placeholder-doctor-4.jpg",
-    initials: "AP",
-    bgColor: "bg-purple-100",
+    coordinates: [18.5204, 73.8567],
   },
   {
     id: 5,
@@ -63,9 +53,7 @@ const doctors = [
     specialty: "Endocrinologist",
     location: "Hyderabad, India",
     rating: 4.8,
-    image: "/placeholder-doctor-5.jpg",
-    initials: "SG",
-    bgColor: "bg-orange-100",
+    coordinates: [17.385, 78.4867],
   },
   {
     id: 6,
@@ -73,66 +61,11 @@ const doctors = [
     specialty: "Sports Medicine",
     location: "Chennai, India",
     rating: 4.5,
-    image: "/placeholder-doctor-6.jpg",
-    initials: "VS",
-    bgColor: "bg-teal-100",
+    coordinates: [13.0827, 80.2707],
   },
-]
+];
 
 export default function DoctorsPage() {
-<<<<<<< Updated upstream
-  return (
-    <DashboardLayout
-      title="Find Best Doctors"
-      subtitle="Connect with trusted healthcare professionals"
-    >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {doctors.map((doctor) => (
-          <Card key={doctor.id} className="rounded-2xl border-0 shadow-md hover:shadow-lg transition-shadow">
-            <CardContent className="p-5">
-              <div className="flex items-start gap-4">
-                {/* Avatar */}
-                <Avatar className={`h-16 w-16 ${doctor.bgColor}`}>
-                  <AvatarImage src={doctor.image} alt={doctor.name} />
-                  <AvatarFallback className={`${doctor.bgColor} text-foreground font-semibold text-lg`}>
-                    {doctor.initials}
-                  </AvatarFallback>
-                </Avatar>
-
-                {/* Info */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <h3 className="font-semibold text-foreground truncate">{doctor.name}</h3>
-                      <p className="text-sm text-muted-foreground">{doctor.specialty}</p>
-                    </div>
-                    <div className="flex items-center gap-1 shrink-0">
-                      <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-                      <span className="text-sm font-medium text-foreground">{doctor.rating}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-1 mt-2 text-sm text-muted-foreground">
-                    <MapPin className="h-4 w-4" />
-                    <span>{doctor.location}</span>
-                  </div>
-
-                  <Button
-                    variant="outline"
-                    className="mt-3 rounded-xl border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-colors"
-                  >
-                    View Profile
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    </DashboardLayout>
-  )
-
-=======
   const [showLocationPrompt, setShowLocationPrompt] = useState(false);
   const [hasLocationAccess, setHasLocationAccess] = useState(false);
   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
@@ -179,13 +112,13 @@ export default function DoctorsPage() {
     } else {
       setHasLocationAccess(true);
       setShowLocationPrompt(false);
+      localStorage.setItem("doctor_location_permission", "granted");
     }
   };
 
   const handleDenyLocation = () => {
     setHasLocationAccess(false);
     setShowLocationPrompt(false);
-    localStorage.removeItem("doctor_location_permission");
   };
 
   const handleMapRedirect = (doctor: Doctor) => {
@@ -209,7 +142,7 @@ export default function DoctorsPage() {
       {/* 1. Permanent Left Sidebar */}
       <Sidebar />
 
-      {/* 2. Main Page Content (Offset for Sidebar) */}
+      {/* 2. Main Page Content */}
       <main className="flex-1 ml-64 p-8 overflow-y-auto">
         {/* Permission Modal */}
         {showLocationPrompt && (
@@ -253,19 +186,10 @@ export default function DoctorsPage() {
 
           <div>
             {hasLocationAccess ? (
-              <button
-                onClick={() => {
-                  // Click to reset & test prompt anytime
-                  localStorage.removeItem("doctor_location_permission");
-                  setHasLocationAccess(false);
-                  setShowLocationPrompt(true);
-                }}
-                title="Click to reset permission"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-medium border border-emerald-200 hover:bg-emerald-100 transition"
-              >
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-medium border border-emerald-200">
                 <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                Location Active (Click to reset)
-              </button>
+                Location Active
+              </span>
             ) : (
               <button
                 onClick={() => setShowLocationPrompt(true)}
@@ -347,5 +271,4 @@ export default function DoctorsPage() {
       </main>
     </div>
   );
->>>>>>> Stashed changes
 }
