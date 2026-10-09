@@ -4,122 +4,280 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #fdf2f4;
-  --foreground: #1f2937;
-  --card: #ffffff;
-  --card-foreground: #1f2937;
-  --popover: #ffffff;
-  --popover-foreground: #1f2937;
-  --primary: #e84a7f;
-  --primary-foreground: #ffffff;
-  --secondary: #fce7eb;
-  --secondary-foreground: #e84a7f;
-  --muted: #f8d7dd;
-  --muted-foreground: #6b7280;
-  --accent: #fce7eb;
-  --accent-foreground: #e84a7f;
-  --destructive: #ef4444;
-  --destructive-foreground: #ffffff;
-  --border: #fce7eb;
-  --input: #fce7eb;
-  --ring: #e84a7f;
-  --chart-1: #e84a7f;
-  --chart-2: #4ade80;
-  --chart-3: #f59e0b;
-  --chart-4: #3b82f6;
-  --chart-5: #8b5cf6;
-  --radius: 1rem;
-  --sidebar: #ffffff;
-  --sidebar-foreground: #1f2937;
-  --sidebar-primary: #e84a7f;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #fce7eb;
-  --sidebar-accent-foreground: #e84a7f;
-  --sidebar-border: #fce7eb;
-  --sidebar-ring: #e84a7f;
+  /* ============================================================
+     MediNutri AI+ — Official Master Design System
+     Palette specified:
+     - Deep forest green: #102F24
+     - Dark green: #173B2D
+     - Primary sage: #7EAA82
+     - Light sage: #E5F0DF
+     - Warm ivory: #FAF8F0
+     - Soft cream: #F5F0E5
+     - Blush pink: #FCE8E5
+     - Coral accent: #FF777F
+     - Soft lavender: #EEEAF8
+     - Light blue: #E8F4FC
+     - Main text: #172C23
+     - Secondary text: #63736A
+     - Subtle borders: #E5E7DE
+  ============================================================ */
+
+  /* Backgrounds */
+  --background: #FAF8F0;
+  --foreground: #172C23;
+
+  /* Cards & Popovers */
+  --card: #FFFFFF;
+  --card-foreground: #172C23;
+  --popover: #FFFFFF;
+  --popover-foreground: #172C23;
+
+  /* Primary: Deep Forest Green */
+  --primary: #173B2D;
+  --primary-foreground: #FFFFFF;
+
+  /* Secondary: Light Sage */
+  --secondary: #E5F0DF;
+  --secondary-foreground: #172C23;
+
+  /* Muted */
+  --muted: #F5F0E5;
+  --muted-foreground: #63736A;
+
+  /* Accent: Primary Sage */
+  --accent: #7EAA82;
+  --accent-foreground: #FFFFFF;
+
+  /* Coral / Pink Highlights */
+  --coral: #FF777F;
+  --blush: #FCE8E5;
+
+  /* Destructive */
+  --destructive: #E05A5A;
+  --destructive-foreground: #FFFFFF;
+
+  /* Borders & Inputs */
+  --border: #E5E7DE;
+  --input: #F5F0E5;
+  --ring: #7EAA82;
+
+  /* Chart palette */
+  --chart-1: #173B2D;
+  --chart-2: #7EAA82;
+  --chart-3: #2E8BC0;
+  --chart-4: #FF777F;
+  --chart-5: #E8A87C;
+
+  /* Radius */
+  --radius: 1.25rem;
+
+  /* Sidebar: Deep Forest Green */
+  --sidebar: #102F24;
+  --sidebar-foreground: #FFFFFF;
+  --sidebar-primary: #7EAA82;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #173B2D;
+  --sidebar-accent-foreground: #FFFFFF;
+  --sidebar-border: #1C4535;
+  --sidebar-ring: #7EAA82;
+
+  /* Semantic palette */
+  --forest-dark: #102F24;
+  --forest-green: #173B2D;
+  --sage-primary: #7EAA82;
+  --sage-light: #E5F0DF;
+  --ivory-warm: #FAF8F0;
+  --cream-soft: #F5F0E5;
+  --pink-blush: #FCE8E5;
+  --coral-accent: #FF777F;
+  --lavender-soft: #EEEAF8;
+  --blue-light: #E8F4FC;
+  --text-main: #172C23;
+  --text-secondary: #63736A;
+  --border-subtle: #E5E7DE;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.145 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.145 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.396 0.141 25.723);
-  --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: oklch(0.269 0 0);
-  --input: oklch(0.269 0 0);
-  --ring: oklch(0.439 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.269 0 0);
-  --sidebar-ring: oklch(0.439 0 0);
+  --background: #0B1E17;
+  --foreground: #EAF2EC;
+
+  --card: #122820;
+  --card-foreground: #EAF2EC;
+  --popover: #122820;
+  --popover-foreground: #EAF2EC;
+
+  --primary: #7EAA82;
+  --primary-foreground: #0B1E17;
+
+  --secondary: #173B2D;
+  --secondary-foreground: #E5F0DF;
+
+  --muted: #162E25;
+  --muted-foreground: #8FA698;
+
+  --accent: #2E5C47;
+  --accent-foreground: #EAF2EC;
+
+  --destructive: #E06A6A;
+  --destructive-foreground: #FFFFFF;
+
+  --border: #1D4335;
+  --input: #162E25;
+  --ring: #7EAA82;
+
+  --chart-1: #7EAA82;
+  --chart-2: #3E8B65;
+  --chart-3: #58A6DF;
+  --chart-4: #FF8A91;
+  --chart-5: #E8A87C;
+
+  --sidebar: #0A1C15;
+  --sidebar-foreground: #EAF2EC;
+  --sidebar-primary: #7EAA82;
+  --sidebar-primary-foreground: #0B1E17;
+  --sidebar-accent: #143529;
+  --sidebar-accent-foreground: #FFFFFF;
+  --sidebar-border: #1C4535;
+  --sidebar-ring: #7EAA82;
 }
 
-@theme inline {
-  --font-sans: 'Geist', 'Geist Fallback';
-  --font-mono: 'Geist Mono', 'Geist Mono Fallback';
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
+/* ============================================================
+   PRESERVED BOTANICAL PAGE BACKGROUND
+============================================================ */
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
 }
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+/* Existing botanical background preserved exactly as required */
+.botanical-bg {
+  position: relative;
+  z-index: 1;
+}
+.botanical-bg::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url('/botanical-bg.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  opacity: 0.18;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.dark .botanical-bg::before {
+  opacity: 0.08;
+}
+
+/* ============================================================
+   CARD SYSTEM & SURFACES
+============================================================ */
+
+.nature-card {
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-subtle);
+  border-radius: 24px;
+  box-shadow: 0 4px 20px rgba(16, 47, 36, 0.04), 0 1px 3px rgba(16, 47, 36, 0.02);
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease, border-color 0.22s ease;
+  position: relative;
+  overflow: hidden;
+}
+.nature-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(16, 47, 36, 0.07), 0 2px 6px rgba(16, 47, 36, 0.03);
+}
+
+.card-hover {
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease;
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(16, 47, 36, 0.07);
+}
+
+/* Metric card specific gradient surfaces matching reference */
+.stat-card-bmi {
+  background: #FDF5F3;
+  border-color: #F8DFD9;
+}
+.stat-card-calories {
+  background: #F3F8F1;
+  border-color: #DEECDA;
+}
+.stat-card-water {
+  background: #F0F7FC;
+  border-color: #D8EBF7;
+}
+
+/* ============================================================
+   BUTTONS & MICRO-INTERACTIONS
+============================================================ */
+
+.btn-hover {
+  transition: transform 0.16s ease, box-shadow 0.16s ease, filter 0.16s ease;
+}
+.btn-hover:hover {
+  transform: translateY(-1px);
+}
+.btn-hover:active {
+  transform: scale(0.98);
+}
+
+/* Ask AI Nutritionist Coral Pill Button */
+.btn-coral-ai {
+  background: linear-gradient(135deg, #FF777F 0%, #FF5E6C 100%);
+  color: #FFFFFF;
+  border-radius: 9999px;
+  box-shadow: 0 3px 12px rgba(255, 119, 127, 0.32);
+  transition: transform 0.16s ease, box-shadow 0.16s ease, filter 0.16s ease;
+}
+.btn-coral-ai:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 18px rgba(255, 119, 127, 0.45);
+  filter: brightness(1.03);
+}
+
+/* Pill Quick Action Buttons */
+.pill-action-btn {
+  background: #FFFFFF;
+  border: 1px solid #E5E7DE;
+  border-radius: 9999px;
+  color: #172C23;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  padding: 0.45rem 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 1px 3px rgba(16, 47, 36, 0.03);
+  transition: all 0.18s ease;
+}
+.pill-action-btn:hover {
+  background: #FAF8F0;
+  border-color: #7EAA82;
+  transform: translateY(-1px);
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(99, 115, 106, 0.25);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 115, 106, 0.45);
 }

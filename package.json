@@ -3,9 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-
     "dev": "next dev --webpack",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint ."
   },
@@ -48,7 +47,7 @@
     "date-fns": "4.1.0",
     "embla-carousel-react": "8.6.0",
     "firebase": "^12.12.1",
-    "framer-motion": "^12.38.0",
+    "framer-motion": "^14.0.0",
     "input-otp": "1.4.2",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.564.0",
